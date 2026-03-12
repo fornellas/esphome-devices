@@ -1,0 +1,105 @@
+binary_sensor:
+  - platform: status
+    name: "Status"
+
+button:
+  - platform: factory_reset
+    name: "Factory Reset"
+  - platform: restart
+    name: "Restart"
+  - platform: safe_mode
+    name: "Safe Mode"
+  - platform: shutdown
+    name: "Shutdown"
+
+logger:
+  baud_rate: 0
+debug:
+
+sensor:
+  - platform: internal_temperature
+    name: "Internal Temperature"
+  - platform: uptime
+    name: "Uptime"
+  - platform: wifi_signal
+    name: "WiFi: Signal"
+  - platform: debug
+    free:
+      name: "Debug: Heap Free"
+    block:
+      name: "Debug: Heap Max Block"
+    min_free:
+      name: "Debug: Heap Min Free"
+    fragmentation:
+      name: "Debug: Heap Fragmentation"
+    loop_time:
+      name: "Debug: Loop Time"
+    # psram:
+    #   name: "Debug: Free PSRAM"
+    cpu_frequency:
+      name: "Debug: CPU Frequency"
+
+text_sensor:
+  - platform: uptime
+    name: Uptime
+  - platform: version
+    name: "ESPHome Version"
+  - platform: wifi_info
+    ip_address:
+      name: "WiFi: IP Address"
+      address_0:
+        name: "WiFi: IP Address 0"
+      address_1:
+        name: "WiFi: IP Address 1"
+      address_2:
+        name: "WiFi: IP Address 2"
+      address_3:
+        name: "WiFi: IP Address 3"
+      address_4:
+        name: "WiFi: IP Address 4"
+    ssid:
+      name: "WiFi: SSID"
+    bssid:
+      name: "WiFi: BSSID"
+    mac_address:
+      name: "WiFi: MAC Address"
+    # scan_results:
+    #   name: "WiFi: Scan Results"
+    dns_address:
+      name: "WiFi: DNS Address"
+    power_save_mode:
+      name: "WiFi: Power Save Mode"
+  - platform: debug
+    device:
+      name: "Debug: Device"
+    reset_reason:
+      name: "Debug: Reset Reason"
+
+select:
+  - platform: logger
+    name: "Logger"
+
+factory_reset:
+  resets_required: 5
+  max_delay: 10s
+
+safe_mode:
+
+api:
+  reboot_timeout: 0s
+  encryption:
+    key: ${api_encryption_key}
+
+ota:
+  - platform: esphome
+    password: ${ota_password}
+
+wifi:
+  reboot_timeout: 0s
+  power_save_mode: none
+  enable_btm: true
+  enable_rrm: true
+  ap:
+    ap_timeout: 0s
+
+captive_portal:
