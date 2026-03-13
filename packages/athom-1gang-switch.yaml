@@ -39,6 +39,7 @@ light:
     pin:
       inverted: true
       number: GPIO9
+      ignore_strapping_warning: true
 
   - platform: binary
     name: "Light"
