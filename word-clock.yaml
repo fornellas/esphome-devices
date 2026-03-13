@@ -1,0 +1,258 @@
+substitutions:
+  ota_password: !secret word-clock_ota_password
+  api_encryption_key: !secret word-clock_api_encryption_key
+packages:
+  - !include packages/common.yaml
+esphome:
+  name: "word-clock"
+  friendly_name: "Word Clock"
+  on_boot:
+    - priority: 600.0
+      then:
+        - script.execute: word_clock_light_connecting
+  on_loop:
+    then:
+      - lambda: |-
+          const uint8_t state_connecting = 0;
+          const uint8_t state_captive_portal = 1;
+          const uint8_t state_connected = 2;
+          static uint8_t last_state = state_connecting;
+
+          uint8_t state;
+          if (id(wifi_component).has_ap() && !id(wifi_component).has_sta()) {
+            state = state_captive_portal;
+          } else {
+            if (id(wifi_component).is_connected())
+              state = state_connected;
+            else
+              state = state_connecting;
+          }
+
+          if (state != last_state) {
+            switch (state) {
+              case state_connecting:
+                id(word_clock_light_connecting).execute();
+                break;
+              case state_captive_portal:
+                id(word_clock_light_captive_portal).execute();
+                break;
+              case state_connected:
+                id(last_millis) = 0;
+                break;
+            }
+            last_state = state;
+          }
+
+          if (state == state_connected && id(word_clock_switch).state) {
+            uint32_t now = millis();
+            if (now - id(last_millis) > id(update_ms).state) {
+              auto light_state = id(word_clock_light);
+
+              auto light_call = light_state->turn_on();
+
+              light_call.set_effect(0);
+
+              float gamma = 2.8;
+              if (id(auto_brightness).state) {
+                float min = 25.0;
+                auto call = id(brightness).make_call();
+                float calculated_brightness = std::pow(id(illuminance).state/min, 1.0/gamma) * (100.0 - min) + min;
+                if (calculated_brightness > 100.0)
+                  calculated_brightness = 100.0;
+                call.set_value(calculated_brightness);
+                call.perform();
+              }
+              light_call.set_brightness(std::pow(id(brightness).state / 100.0, 1.0/gamma));
+
+              light_call.perform();
+
+              auto light_output = light_state->get_output();
+              static auto word_clock = WordClock((AddressableLight *)light_output);
+              word_clock.set_time(id(sntp_time).now());
+
+              id(last_millis) = now;
+            }
+          }
+  includes:
+    - word-clock.h
+    - word-clock.cpp
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
+globals:
+  - id: last_millis
+    type: uint32_t
+    initial_value: "0"
+
+script:
+  - id: word_clock_light_connecting
+    then:
+      - light.turn_on:
+          id: word_clock_light
+          brightness: 100%
+          red: 0%
+          green: 0%
+          blue: 100%
+      - light.turn_on:
+          id: word_clock_light
+          effect: "Connecting"
+
+  - id: word_clock_light_captive_portal
+    then:
+      - light.turn_on:
+          id: word_clock_light
+          brightness: 100%
+          red: 0%
+          green: 0%
+          blue: 100%
+      - light.turn_on:
+          id: word_clock_light
+          effect: "Captive Portal"
+
+i2c:
+  sda: 19
+  scl: 18
+  scan: false
+
+binary_sensor:
+  - platform: template
+    name: "NTP time"
+    lambda: return id(sntp_time).now().is_valid();
+
+sensor:
+  - platform: bh1750
+    id: illuminance
+    name: "Illuminance"
+    address: 0x23
+    update_interval: 1s
+
+light:
+  - platform: esp32_rmt_led_strip
+    id: word_clock_light
+    num_leds: 76
+    rgb_order: GRB
+    chipset: WS2812
+    pin: 10
+    default_transition_length: 0s
+    effects:
+      - strobe:
+          name: "Connecting"
+          colors:
+            - state: true
+              brightness: 100%
+              red: 0%
+              green: 0%
+              blue: 100%
+              duration: 500ms
+            - state: false
+              duration: 500ms
+      - strobe:
+          name: "Captive Portal"
+          colors:
+            - state: true
+              brightness: 100%
+              red: 0%
+              green: 0%
+              blue: 100%
+              duration: 250ms
+            - state: false
+              duration: 250ms
+
+text_sensor:
+  - platform: template
+    name: "Time"
+    lambda: |-
+      auto time = id(sntp_time).now();
+
+      if(!time.is_valid()) {
+        return {"N/A"};
+      }
+
+      static char buffer[20];
+      sprintf(
+        buffer,
+        "%04d-%02d-%02d %02d:%02d:%02d",
+        time.year,
+        time.month,
+        time.day_of_month,
+        time.hour,
+        time.minute,
+        time.second
+      );
+      return std::string(buffer);
+    update_interval: 1s
+
+switch:
+  - platform: template
+    name: "Power"
+    id: word_clock_switch
+    icon: mdi:light-switch
+    device_class: switch
+    restore_mode: ALWAYS_ON
+    optimistic: true
+    turn_on_action:
+      - lambda: |-
+          id(last_millis) = 0;
+    turn_off_action:
+      - lambda: |-
+          id(word_clock_light).turn_off().perform();
+
+  - platform: template
+    name: "Auto Brightness"
+    entity_category: config
+    id: auto_brightness
+    icon: mdi:auto-fix
+    device_class: switch
+    restore_mode: RESTORE_DEFAULT_ON
+    optimistic: true
+
+number:
+  - platform: template
+    name: "Brightness"
+    id: brightness
+    icon: mdi:brightness-percent
+    unit_of_measurement: "%"
+    mode: slider
+    min_value: 0
+    max_value: 100
+    step: 0.1
+    initial_value: 100
+    restore_value: true
+    optimistic: true
+
+  - platform: template
+    name: "Update interval"
+    entity_category: config
+    id: update_ms
+    unit_of_measurement: "ms"
+    icon: mdi:speedometer
+    mode: slider
+    min_value: 20
+    max_value: 600
+    step: 1
+    initial_value: 200
+    restore_value: true
+    optimistic: true
+
+time:
+  - platform: sntp
+    id: sntp_time
+    timezone: UTC0
+text:
+  - platform: template
+    name: "Timezone"
+    entity_category: config
+    optimistic: true
+    min_length: 0
+    max_length: 30
+    mode: text
+    # Europe/Dublin: IST-1GMT0,M10.5.0,M3.5.0/1
+    initial_value: "UTC0"
+    restore_value: true
+    on_value:
+      then:
+        - lambda: |-
+            id(sntp_time).set_timezone(x);
