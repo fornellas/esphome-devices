@@ -4,6 +4,7 @@ binary_sensor:
 
 button:
   - platform: factory_reset
+    id: button_factory_reset
     name: "Factory Reset"
   - platform: restart
     name: "Restart"
