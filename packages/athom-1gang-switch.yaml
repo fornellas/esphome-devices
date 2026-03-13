@@ -35,7 +35,6 @@ output:
 
 light:
   - platform: status_led
-    name: "Status LED"
     pin:
       inverted: true
       number: GPIO9
