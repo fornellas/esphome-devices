@@ -1,8 +1,10 @@
 substitutions:
   ota_password: !secret word-clock_ota_password
   api_encryption_key: !secret word-clock_api_encryption_key
+  bh1750_address: 0x23
 packages:
   - !include packages/common.yaml
+  - !include packages/sensors/bh1750.yaml
 esphome:
   name: "word-clock"
   friendly_name: "Word Clock"
@@ -56,7 +58,7 @@ esphome:
               if (id(auto_brightness).state) {
                 float min = 25.0;
                 auto call = id(brightness).make_call();
-                float calculated_brightness = std::pow(id(illuminance).state/min, 1.0/gamma) * (100.0 - min) + min;
+                float calculated_brightness = std::pow(id(bh1750_illuminance).state/min, 1.0/gamma) * (100.0 - min) + min;
                 if (calculated_brightness > 100.0)
                   calculated_brightness = 100.0;
                 call.set_value(calculated_brightness);
@@ -121,13 +123,6 @@ binary_sensor:
   - platform: template
     name: "NTP time"
     lambda: return id(sntp_time).now().is_valid();
-
-sensor:
-  - platform: bh1750
-    id: illuminance
-    name: "Illuminance"
-    address: 0x23
-    update_interval: 1s
 
 light:
   - platform: esp32_rmt_led_strip

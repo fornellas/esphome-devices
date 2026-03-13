@@ -1,0 +1,6 @@
+sensor:
+  - platform: bh1750
+    id: bh1750_illuminance
+    name: "BH1750: Illuminance"
+    address: ${bh1750_address}
+    update_interval: 1s
