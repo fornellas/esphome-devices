@@ -12,10 +12,13 @@ button:
   - platform: factory_reset
     id: button_factory_reset
     name: "Factory Reset"
+
   - platform: restart
     name: "Restart"
+
   - platform: safe_mode
     name: "Safe Mode"
+
   - platform: shutdown
     name: "Shutdown"
 
@@ -27,10 +30,13 @@ debug:
 sensor:
   - platform: internal_temperature
     name: "Internal Temperature"
+
   - platform: uptime
     name: "Uptime"
+
   - platform: wifi_signal
     name: "WiFi: Signal"
+
   - platform: debug
     free:
       name: "Debug: Heap Free"
@@ -50,8 +56,10 @@ sensor:
 text_sensor:
   - platform: uptime
     name: Uptime
+
   - platform: version
     name: "ESPHome Version"
+
   - platform: wifi_info
     ip_address:
       name: "WiFi: IP Address"
@@ -77,6 +85,7 @@ text_sensor:
       name: "WiFi: DNS Address"
     power_save_mode:
       name: "WiFi: Power Save Mode"
+
   - platform: debug
     device:
       name: "Debug: Device"
