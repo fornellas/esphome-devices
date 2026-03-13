@@ -1,0 +1,150 @@
+substitutions:
+  mhz19_pin_duty_cycle: 7
+  mhz19_pin_hd: 6
+  pin_pmsx003_reset: 3
+  pin_pmsx003_set: 0
+  pmsx003_model: "PMS7003"
+  sht3xd_address: 0x44
+  sht3xd_model: "SHT31"
+
+packages:
+  - !include common.yaml
+  # TODO review attributes (class, unit etc)
+  - !include mhz19.yaml
+  # TODO review attributes (class, unit etc)
+  - !include sht3xd.yaml
+  # TODO review attributes (class, unit etc)
+  - !include pmsx003.yaml
+
+esphome:
+  on_boot:
+    - priority: 600.0
+      then:
+        - lambda: |-
+            // Default: Connecting
+            id(wifi_led_pwm).set_level(0.5);
+            id(wifi_led_pwm).set_period(1000);
+            id(wifi_led_pwm).turn_on();
+
+    - priority: 800.0
+      then:
+        - lambda: |-
+            // aqi_led
+            id(aqi_led).set_level(0.0);
+            id(aqi_led).turn_on();
+
+  on_loop:
+    then:
+      - lambda: |-
+          // Captive portal
+          if(id(wifi_component).has_ap() && !id(wifi_component).has_sta()) {
+            id(wifi_led_pwm).set_level(0.5);
+            id(wifi_led_pwm).set_period(200);
+          } else {
+            id(wifi_led_pwm).set_period(1000);
+            // Connected
+            if(id(wifi_component).is_connected())
+              id(wifi_led_pwm).set_level(1);
+            // Connecting
+            else
+              id(wifi_led_pwm).set_level(0.5);
+          }
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
+uart:
+  - id: uart_mhz19
+    rx_pin: 5
+    tx_pin: 4
+    baud_rate: 9600
+
+  - id: uart_pmsx003
+    rx_pin: 1
+    tx_pin:
+      number: 2
+      ignore_strapping_warning: true
+    baud_rate: 9600
+
+i2c:
+  sda: 19
+  scl: 10
+  scan: false
+
+sensor:
+  - platform: template
+    name: "AQI"
+    unit_of_measurement: "AQI"
+    icon: "mdi:gauge"
+    lambda: |-
+      double aqi = -1;
+
+      if (id(mhz19_aqi).state != NAN && id(mhz19_aqi).state > aqi)
+        aqi = id(mhz19_aqi).state;
+      if (id(pmsx003_aqi).state != NAN && id(pmsx003_aqi).state > aqi)
+        aqi = id(pmsx003_aqi).state;
+
+      if(aqi >= 0.0)
+        return aqi;
+      return NAN;
+    update_interval: 1s
+    on_value:
+      then:
+        - lambda: |-
+            if (x == NAN)
+              id(aqi_led).set_level(0);
+            double level = (x - 1.0) / 5.0;
+            id(aqi_led).set_level(level);
+
+output:
+  - platform: slow_pwm
+    id: wifi_led_pwm
+    period: 1s
+    pin:
+      inverted: true
+      number: 9
+      ignore_strapping_warning: true
+
+  - platform: gpio
+    id: mhz19_calibration_led
+    pin: 21
+
+  - platform: slow_pwm
+    id: aqi_led
+    period: 1s
+    pin: 20
+
+binary_sensor:
+  - platform: gpio
+    id: mhz19_sensor_calibrate_zero
+    pin:
+      number: 18
+      mode: INPUT_PULLUP
+    on_press:
+      then:
+        - script.execute: mhz19_calibrate_zero
+
+button:
+  - platform: template
+    name: "MH-Z19: Calibrate Zero"
+    entity_category: config
+    on_press:
+      then:
+        - output.turn_on: mhz19_calibration_led
+        - script.execute: mhz19_calibrate_zero
+        - delay: 2s
+        - output.turn_off: mhz19_calibration_led
+
+  - platform: template
+    name: "MH19: Calibrate Zero"
+    entity_category: config
+    on_press:
+      then:
+        - script.execute: mhz19_calibrate_zero
+
+time:
+  - platform: sntp
+    id: sntp_time
+    timezone: Etc/UTC

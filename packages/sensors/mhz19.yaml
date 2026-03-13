@@ -1,0 +1,235 @@
+substitutions:
+  mhz19_warmup: "75"
+
+external_components:
+  - source:
+      type: git
+      url: https://github.com/fornellas/esphome
+      ref: mhz19_patches
+    components: [mhz19]
+    refresh: 0s
+
+esphome:
+  on_boot:
+    - priority: 800.0
+      then:
+        - lambda: |-
+            if(id(mhz19_abc))
+              id(mhz19_sensor).abc_enable();
+            else
+              id(mhz19_sensor).abc_disable();
+            id(mhz19_hd).turn_on();
+
+globals:
+  - id: mhz19_calibrate_zero_unix_timestamp
+    type: time_t
+    restore_value: yes
+    initial_value: "0"
+
+  - id: mhz19_abc
+    type: bool
+    restore_value: yes
+    initial_value: "false"
+
+script:
+  - id: mhz19_calibrate_zero
+    then:
+      - mhz19.calibrate_zero: mhz19_sensor
+      - lambda: |-
+          auto time = id(sntp_time).utcnow();
+          if(time.is_valid()) {
+            id(mhz19_calibrate_zero_unix_timestamp) = time.timestamp;
+            mhz19_calibrate_zero_unix_timestamp->loop();
+            global_preferences->sync();
+            ESP_LOGD("MH-Z19", "Saved zero calibration timestamp");
+          } else {
+            ESP_LOGW("MH-Z19", "Time unavailable, can't save zero calibration timestamp");
+          }
+
+select:
+  - platform: template
+    name: "MH-Z19: Detection range"
+    id: mhz19_detection_range
+    icon: mdi:dots-horizontal
+    entity_category: config
+    optimistic: true
+    options:
+      - "Default"
+      - "0-2000ppm"
+      - "0-5000ppm"
+      - "0-10000ppm"
+    initial_option: "Default"
+    restore_value: true
+    on_value:
+      then:
+        - lambda: |-
+            if ("0-2000ppm" == x)
+              id(mhz19_sensor).detection_range(esphome::mhz19::MHZ19_DETECTION_RANGE_0_2000PPM);
+            else if ("0-5000ppm" == x)
+              id(mhz19_sensor).detection_range(esphome::mhz19::MHZ19_DETECTION_RANGE_0_5000PPM);
+            else if ("0-10000ppm" == x)
+              id(mhz19_sensor).detection_range(esphome::mhz19::MHZ19_DETECTION_RANGE_0_10000PPM);
+
+sensor:
+  - platform: mhz19
+    id: mhz19_sensor
+    uart_id: uart_mhz19
+    co2:
+      id: mhz19_sensor_co2
+      name: "MH-Z19: CO₂ (UART)"
+      filters:
+        - lambda: |-
+            return id(mhz19_non_linearity_slope).state * x + id(mhz19_non_linearity_offset).state;
+    update_interval: 1s
+    automatic_baseline_calibration: false
+    warmup_time: "${mhz19_warmup}s"
+
+  - platform: duty_cycle
+    name: "MH-Z19: CO₂ (PWM)"
+    unit_of_measurement: "ppm"
+    icon: "mdi:molecule-co2"
+    accuracy_decimals: 0
+    pin:
+      number: ${mhz19_pin_duty_cycle}
+      mode:
+        input: true
+    update_interval: 1s
+    filters:
+      - lambda: |-
+          if(millis() < ${mhz19_warmup} * 1000)
+            return NAN;
+
+          if (id(mhz19_detection_range).state == "Default")
+            return NAN;
+          double mul;
+          if (id(mhz19_detection_range).state == "0-2000ppm")
+            mul = 2.0;
+          else if (id(mhz19_detection_range).state == "0-5000ppm")
+            mul = 5.0;
+          else if (id(mhz19_detection_range).state == "0-10000ppm")
+            mul = 10.0;
+
+          auto ppm = (x/100.0*1004.0-2.0)*mul;
+
+          return id(mhz19_non_linearity_slope).state * ppm + id(mhz19_non_linearity_offset).state;
+
+  - platform: template
+    name: "MH-Z19: Last zero calibration unix timestamp"
+    icon: "mdi:calendar"
+    entity_category: diagnostic
+    unit_of_measurement: "s"
+    lambda: |-
+      time_t timestamp = id(mhz19_calibrate_zero_unix_timestamp);
+      if (timestamp == 0)
+        return NAN;
+      return timestamp;
+    update_interval: 1s
+
+  - platform: template
+    name: "MH-Z19: Last zero calibration time ago"
+    entity_category: diagnostic
+    unit_of_measurement: "s"
+    lambda: |-
+      time_t timestamp = id(mhz19_calibrate_zero_unix_timestamp);
+      if (timestamp == 0)
+        return NAN;
+      esphome::ESPTime now = id(sntp_time).utcnow();
+      if(!now.is_valid())
+        return NAN;
+      return now.timestamp - timestamp;
+    update_interval: 1s
+
+  - platform: template
+    name: "MH-Z19: AQI"
+    id: mhz19_aqi
+    unit_of_measurement: "AQI"
+    icon: "mdi:gauge"
+    lambda: |-
+      double aqi = -1;
+
+      double co2_ppm = id(mhz19_sensor_co2).state;
+      if(!std::isnan(co2_ppm)) {
+        double aqi_co2 = 0.0;
+        if(co2_ppm < 400.0)
+          aqi_co2 = co2_ppm / 400.0;
+        else if(co2_ppm < 1000.0)
+          aqi_co2 = 1.0 + (co2_ppm - 400.0) / 600.0;
+        else if(co2_ppm < 1500.0)
+          aqi_co2 = 2.0 + (co2_ppm - 1000.0) / 500.0;
+        else if(co2_ppm < 2000.0)
+          aqi_co2 = 3.0 + (co2_ppm - 1500.0) / 500.0;
+        else if(co2_ppm < 5000.0)
+          aqi_co2 = 4.0 + (co2_ppm - 2000.0) / 3000.0;
+        else
+          aqi_co2 = 3000.0 * co2_ppm - 10000.0;
+        if(aqi_co2 > aqi)
+          aqi = aqi_co2;
+      }
+
+      if(aqi >= 0.0)
+        return aqi;
+      return NAN;
+    update_interval: 1s
+
+output:
+  - platform: gpio
+    id: mhz19_hd
+    pin: ${mhz19_pin_hd}
+
+text_sensor:
+  - platform: template
+    name: "MH-Z19: Last zero calibration"
+    icon: "mdi:calendar"
+    entity_category: diagnostic
+    lambda: |-
+      char buffer[32];
+      auto espTime = ESPTime::from_epoch_utc(id(mhz19_calibrate_zero_unix_timestamp));
+      if(!espTime.is_valid())
+        return {"Never"};
+      espTime.strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S %z");
+      return {buffer};
+    update_interval: 1s
+
+switch:
+  - platform: template
+    name: "MH-Z19: ABC"
+    entity_category: config
+    lambda: |-
+      return id(mhz19_abc);
+    turn_on_action:
+      - mhz19.abc_enable: mhz19_sensor
+      - globals.set:
+          id: mhz19_abc
+          value: "true"
+    turn_off_action:
+      - mhz19.abc_disable: mhz19_sensor
+      - globals.set:
+          id: mhz19_abc
+          value: "false"
+
+number:
+  - platform: template
+    name: "MH-Z19: Non linearity slope"
+    icon: "mdi:slope-downhill"
+    id: mhz19_non_linearity_slope
+    entity_category: config
+    mode: box
+    min_value: 0
+    max_value: 2
+    step: 0.0001
+    optimistic: true
+    restore_value: true
+    initial_value: 1
+
+  - platform: template
+    name: "MH-Z19: Non linearity offset"
+    icon: "mdi:align-vertical-distribute"
+    id: mhz19_non_linearity_offset
+    entity_category: config
+    mode: box
+    min_value: -410
+    max_value: 410
+    step: 1
+    optimistic: true
+    restore_value: true
+    initial_value: 0

@@ -1,0 +1,8 @@
+substitutions:
+  ota_password: !secret living-room-environmental_ota_password
+  api_encryption_key: !secret living-room-environmental_api_encryption_key
+packages:
+  - !include packages/environmental.yaml
+esphome:
+  name: living-room-environmental
+  friendly_name: "Living Room Environmental"
