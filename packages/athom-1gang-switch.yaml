@@ -33,13 +33,13 @@ output:
     inverted: true
     id: output_button_led
 
-light:
-  - platform: status_led
-    pin:
-      inverted: true
-      number: GPIO9
-      ignore_strapping_warning: true
+status_led:
+  pin:
+    number: GPIO9
+    inverted: true
+    ignore_strapping_warning: true
 
+light:
   - platform: binary
     name: "Light"
     id: light1
