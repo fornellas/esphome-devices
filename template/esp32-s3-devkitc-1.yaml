@@ -1,0 +1,12 @@
+substitutions:
+  ota_password: !secret esp32-s3-devkitc-1_ota_password
+  api_encryption_key: !secret esp32-s3-devkitc-1_api_encryption_key
+packages:
+  - !include packages/common.yaml
+esphome:
+  name: esp32-s3-devkitc-1
+  friendly_name: ESP32-S3 DevKitc-1
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: esp-idf
