@@ -1,0 +1,227 @@
+substitutions:
+  pin_pmsx003_reset: 18
+  pin_pmsx003_set: 2
+  pmsx003_model: "PMS7003"
+  s88_address: 0xFE
+  sht3xd_address: 0x44
+  sht3xd_model: "SHT31"
+
+packages:
+  - !include ../common.yaml
+  # - !include ../sensors/s88.yaml
+  # - !include ../sensors/sht3xd.yaml
+  - !include ../sensors/pmsx003.yaml
+
+esphome:
+  on_loop:
+    then:
+      - script.execute: status_light_set
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
+script:
+  - id: status_light_boot
+    then:
+      - light.turn_on:
+          id: blue_led_light
+          effect: "slow_strobe"
+      - light.turn_off: yellow_led_light
+      - light.turn_off: white_led_light
+
+  - id: status_light_connecting
+    then:
+      - light.turn_on:
+          id: blue_led_light
+          effect: "slow_strobe"
+      - light.turn_off: yellow_led_light
+      - light.turn_off: white_led_light
+
+  - id: status_light_captive_portal
+    then:
+      - light.turn_on:
+          id: blue_led_light
+          effect: "fast_strobe"
+      - light.turn_off: yellow_led_light
+      - light.turn_off: white_led_light
+
+  - id: status_light_connected
+    then:
+      - light.turn_off: blue_led_light
+      - light.turn_on: blue_led_light
+      - light.turn_off: yellow_led_light
+      - light.turn_off: white_led_light
+
+  - id: status_light_factory_reset
+    then:
+      - light.turn_off: blue_led_light
+      - light.turn_on: blue_led_light
+      - light.turn_off: yellow_led_light
+      - light.turn_on: yellow_led_light
+      - light.turn_off: white_led_light
+      - light.turn_on: white_led_light
+
+  - id: status_light_set
+    then:
+      lambda: |-
+        const uint8_t state_boot = 0;
+        const uint8_t state_connecting = 1;
+        const uint8_t state_captive_portal = 2;
+        const uint8_t state_connected = 3;
+
+        static uint8_t last_state = state_connecting;
+
+        uint8_t state;
+        if(id(wifi_component).has_ap() && !id(wifi_component).has_sta()) {
+            state = state_captive_portal;
+        } else {
+          if(id(wifi_component).is_connected()) {
+            state = state_connected;
+          } else {
+            state = state_connecting;
+          }
+        }
+
+        if (state != last_state) {
+          switch (state) {
+            case state_boot:
+              id(status_light_boot).execute();
+              break;
+            case state_connecting:
+              id(status_light_connecting).execute();
+              break;
+            case state_captive_portal:
+              id(status_light_captive_portal).execute();
+              break;
+            case state_connected:
+              id(status_light_connected).execute();
+              break;
+          }
+          last_state = state;
+        }
+
+uart:
+  - id: uart_pmsx003
+    rx_pin: 3
+    tx_pin: 19
+    baud_rate: 9600
+
+  - id: uart_s88
+    rx_pin: 5
+    tx_pin: 6
+    baud_rate: 9600
+
+modbus:
+  id: modbus_s88
+  uart_id: uart_s88
+
+i2c:
+  sda: 1
+  scl: 0
+  scan: false
+
+sensor:
+  # - platform: template
+  #   name: "AQI"
+  #   unit_of_measurement: "AQI"
+  #   icon: "mdi:gauge"
+  #   lambda: |-
+  #     double aqi = -1;
+
+  #     if (id(s88_aqi).state != NAN && id(s88_aqi).state > aqi)
+  #       aqi = id(s88_aqi).state;
+
+  #     if (id(pmsx003_aqi).state != NAN && id(pmsx003_aqi).state > aqi)
+  #       aqi = id(pmsx003_aqi).state;
+
+  #     if(aqi >= 0.0)
+  #       return aqi;
+  #     return NAN;
+  #   update_interval: 1s
+  #   on_value:
+  #     then:
+  #       - lambda: |-
+  #           if (x == NAN) {
+  #             id(white_led_light).turn_on().set_effect("fast_strobe").perform();
+  #             id(yellow_led_light).turn_on().set_effect("fast_strobe").perform();
+  #           }
+  #           if (x < 1.5) {
+  #             id(white_led_light).turn_off().perform();
+  #             id(white_led_light).turn_on().perform();
+  #             id(yellow_led_light).turn_off().perform();
+  #           }
+  #           if (x >= 1.5 && x < 3) {
+  #             id(white_led_light).turn_off().perform();
+  #             id(yellow_led_light).turn_off().perform();
+  #             id(yellow_led_light).turn_on().perform();
+  #           }
+  #           if (x > 3) {
+  #             id(white_led_light).turn_off().perform();
+  #             id(yellow_led_light).turn_off().perform();
+  #             id(yellow_led_light).turn_on().set_effect("fast_strobe").perform();
+  #           }
+
+light:
+  - platform: binary
+    id: blue_led_light
+    output: blue_led_output
+    internal: true
+    effects:
+      - strobe:
+          name: "slow_strobe"
+          colors:
+            - state: true
+              duration: 250ms
+            - state: false
+              duration: 250ms
+      - strobe:
+          name: "fast_strobe"
+          colors:
+            - state: true
+              duration: 125ms
+            - state: false
+              duration: 125ms
+
+  - platform: binary
+    id: yellow_led_light
+    output: yellow_led_output
+    internal: true
+    effects:
+      - strobe:
+          name: "fast_strobe"
+          colors:
+            - state: true
+              duration: 125ms
+            - state: false
+              duration: 125ms
+
+  - platform: binary
+    id: white_led_light
+    output: white_led_output
+    internal: true
+    effects:
+      - strobe:
+          name: "fast_strobe"
+          colors:
+            - state: true
+              duration: 125ms
+            - state: false
+              duration: 125ms
+
+output:
+  - platform: gpio
+    pin:
+      inverted: true
+      number: 9
+      ignore_strapping_warning: true
+    id: blue_led_output
+
+  - platform: gpio
+    pin: 20
+    id: yellow_led_output
+
+  - platform: gpio
+    pin: 21
+    id: white_led_output

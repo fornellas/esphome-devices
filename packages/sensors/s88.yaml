@@ -1,0 +1,754 @@
+modbus_controller:
+  - id: s88_modbus_controller
+    address: ${s88_address}
+    modbus_id: modbus_s88
+    update_interval: 3s
+    max_cmd_retries: 0
+    on_online:
+      - binary_sensor.template.publish:
+          id: s88_offline
+          state: OFF
+    on_offline:
+      - binary_sensor.template.publish:
+          id: s88_offline
+          state: ON
+
+binary_sensor:
+  # MeterStatus: Fatal error (IR1/DI1)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Status: Fatal error"
+    register_type: read
+    address: 0x00
+    bitmask: 0x01 # 1
+
+  # MeterStatus: Algorithm Error (IR1/DI3)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Status: Algorithm Error"
+    register_type: read
+    address: 0x00
+    bitmask: 0x04 # 3
+
+  # MeterStatus: Output Error (IR1/DI4)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Status: Output Error"
+    register_type: read
+    address: 0x00
+    bitmask: 0x08 # 4
+
+  # MeterStatus: Self diagnostics error (IR1/DI5)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Status: Self diagnostics error"
+    register_type: read
+    address: 0x00
+    bitmask: 0x10 # 5
+
+  # MeterStatus: Out Of Range (IR1/DI6)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Status: Out Of Range"
+    register_type: read
+    address: 0x00
+    bitmask: 0x20 # 6
+
+  # MeterStatus: Memory error (IR1/DI7)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Status: Memory error"
+    register_type: read
+    address: 0x00
+    bitmask: 0x40 # 7
+
+  # MeterStatus: Warm Up (IR1/DI8)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Status: Warm Up"
+    register_type: read
+    address: 0x00
+    bitmask: 0x80 # 8
+
+  # Alarm Output satus (IR3/DI33)
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   name: "S88: Alarm: Status"
+  #   register_type: read
+  #   address: 0x02
+  #   bitmask: 0x01
+  #   filters:
+  #     - invert:
+
+  # PWM Output status (IR3/DI34)
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   name: "S88: PWM: Full Output"
+  #   register_type: read
+  #   address: 0x02
+  #   bitmask: 0x02
+
+  - platform: template
+    name: "S88: Offline"
+    id: s88_offline
+
+  # Acknowledgement register: Reset calibration has been performed (HR1/CI1)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Calibration: Reset CO₂ calibration to factory defaults: Acknowledged"
+    register_type: holding
+    address: 0
+    bitmask: 0x01 # 1
+
+  # Force ABC calibration has been performed (HR1/CI3)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Calibration: ABC: Force: Acknowledged"
+    register_type: holding
+    address: 0
+    bitmask: 0x04 # 3
+
+  # Acknowledgement register: CO₂ target calibration (HR2/0x7C/0x5)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Calibration: Target: Acknowledged"
+    register_type: holding
+    address: 0
+    bitmask: 0x10 # 5
+
+  # CO₂ background calibration has been performed (HR1/CI6)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Calibration: Background: Acknowledged"
+    register_type: holding
+    address: 0
+    bitmask: 0x20 # 6
+
+  # CO₂ zero calibration has been performed (HR1/CI7)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Calibration: Zero: Acknowledged"
+    register_type: holding
+    address: 0
+    bitmask: 0x40 # 7
+
+sensor:
+  # Space CO₂ (IR4)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    id: s88_sensor_space_co2
+    name: "S88: Sensor: Space CO₂"
+    register_type: "read"
+    address: 0x03
+    value_type: U_WORD
+    unit_of_measurement: "ppm"
+    filters:
+      - lambda: |-
+          if (x == 0) return NAN;
+          return x;
+
+  - platform: template
+    name: "S88: AQI"
+    id: s88_aqi
+    unit_of_measurement: "AQI"
+    icon: "mdi:gauge"
+    lambda: |-
+      double aqi = -1;
+
+      double co2_ppm = id(s88_sensor_space_co2).state;
+      if(!std::isnan(co2_ppm)) {
+        double aqi_co2 = 0.0;
+        if(co2_ppm < 400.0)
+          aqi_co2 = co2_ppm / 400.0;
+        else if(co2_ppm < 1000.0)
+          aqi_co2 = 1.0 + (co2_ppm - 400.0) / 600.0;
+        else if(co2_ppm < 1500.0)
+          aqi_co2 = 2.0 + (co2_ppm - 1000.0) / 500.0;
+        else if(co2_ppm < 2000.0)
+          aqi_co2 = 3.0 + (co2_ppm - 1500.0) / 500.0;
+        else if(co2_ppm < 5000.0)
+          aqi_co2 = 4.0 + (co2_ppm - 2000.0) / 3000.0;
+        else
+          aqi_co2 = 3000.0 * co2_ppm - 10000.0;
+        if(aqi_co2 > aqi)
+          aqi = aqi_co2;
+      }
+
+      if(aqi >= 0.0)
+        return aqi;
+      return NAN;
+    update_interval: 1s
+
+  # Space Temp (IR5)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Sensor: Space Temperature"
+    register_type: "read"
+    address: 0x04
+    value_type: U_WORD
+    unit_of_measurement: "C"
+    accuracy_decimals: 2
+    filters:
+      - multiply: 0.01
+      - lambda: |-
+          if (x > 200) return NAN;
+          return x;
+
+  # Synchro (IR6)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Sensor: Measurement periods"
+    register_type: "read"
+    address: 0x05
+    value_type: U_WORD
+
+  # Vbb (IR7)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Sensor: Vbb"
+    register_type: "read"
+    address: 0x06
+    value_type: U_WORD
+    unit_of_measurement: "V"
+    accuracy_decimals: 3
+    filters:
+      - multiply: 0.001
+
+  # Elapsed Time counter (IR24,IR25)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Sensor: Elapsed Time"
+    register_type: "read"
+    address: 23
+    register_count: 2
+    value_type: U_DWORD
+    unit_of_measurement: "h"
+
+  # Memory Map Version (IR28)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Info: Memory Map Version"
+    register_type: "read"
+    address: 27
+    value_type: U_WORD
+
+  # Sensor ID (IR30,IR31)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Info: Sensor ID"
+    register_type: "read"
+    address: 29
+    register_count: 2
+    value_type: U_DWORD
+
+  # PWM Output (IR22)
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   name: "S88: PWM: Duty cycle"
+  #   register_type: "read"
+  #   address: 21
+  #   value_type: U_WORD
+  #   lambda: "return x * 100.0 / 16383.0;"
+  #   unit_of_measurement: "%"
+
+  # Sensor Type ID (IR26,IR27)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Info: Sensor Type ID"
+    register_type: "read"
+    address: 25
+    register_count: 2
+    value_type: U_DWORD
+    bitmask: 0x0FFF
+
+select:
+  # Static IIR Config (HR28)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: IIR Filter"
+    address: 27
+    value_type: U_WORD
+    optionsmap:
+      "disabled": 0
+      "1 static": 1
+      "2 static": 2
+      "3 static": 3
+      "4 static": 4
+      "5 static": 5
+      "6 static": 6
+      "7 static": 7
+      "8 static": 8
+      "9 static": 9
+      "10 static": 10
+      "11 static": 11
+      "12 static": 12
+      "13 static": 13
+      "14 static": 14
+      "15 static": 15
+      "16 static": 16
+      "factory default settings": 255
+
+number:
+  # Communication address (HR20)
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   name: "S88: Communication address"
+  #   address: 19
+  #   value_type: U_WORD
+  #   min_value: 1
+  #   max_value: 254
+  #   step: 1
+  #   mode: box
+
+  # Pressure (HR4)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Pressure compensation"
+    address: 3
+    value_type: S_WORD
+    unit_of_measurement: "hPa"
+    multiply: 10
+    min_value: 0
+    step: 0.1
+    max_value: 32767
+    mode: box
+    lambda: |-
+      if(x<=0)
+        return NAN;
+      return x;
+
+  # Default pressure (HR27)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Pressure compensation: default"
+    address: 26
+    value_type: S_WORD
+    unit_of_measurement: "hPa"
+    multiply: 10
+    min_value: 0
+    step: 0.1
+    max_value: 32767
+    mode: box
+    lambda: |-
+      if(x<=0)
+        return NAN;
+      return x;
+
+  # ABC Period (HR32)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Calibration: ABC Period"
+    address: 31
+    value_type: U_WORD
+    unit_of_measurement: "h"
+    min_value: 0
+    step: 1
+    max_value: 65535
+    mode: box
+    lambda: |-
+      if(x==0)
+        return NAN;
+      return x;
+
+  # ABC Target (HR33)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Calibration: Background"
+    address: 32
+    value_type: U_WORD
+    unit_of_measurement: "ppm"
+    min_value: 0
+    step: 1
+    max_value: 65535
+    mode: box
+
+  # Calibration Target Register (HR3)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: Calibration: Target"
+    address: 2
+    value_type: U_WORD
+    unit_of_measurement: "ppm"
+    min_value: 0
+    step: 1
+    max_value: 65535
+    mode: box
+
+  # OUT0 RDB (HR10)
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   name: "S88: Alarm: Regulator Dead Band"
+  #   id: alarm_regulator_dead_band
+  #   address: 9
+  #   value_type: U_WORD
+  #   min_value: 0
+  #   step: 1
+  #   max_value: 32767
+  #   mode: box
+  #   unit_of_measurement: "ppm"
+  #   lambda: |-
+  #     uint16_t high = static_cast<uint16_t>(data[item->offset] & 0x7F);
+  #     uint16_t low = static_cast<uint16_t>(data[item->offset+1]);
+  #     return (high << 8) | low;
+  #   write_lambda: |-
+  #     uint8_t shape_bit;
+  #     if (id(alarm_mirror_in_y_axis).state) {
+  #       shape_bit = 0x80;
+  #     } else {
+  #       shape_bit = 0x00;
+  #     }
+  #     uint16_t value = x;
+  #     uint16_t high = (value & 0xFF00) >> 8;
+  #     uint16_t low = value & 0xff;
+  #     return ((shape_bit|high) << 8) | low;
+
+  # OUT0 RDB (HR10)
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   id: alarm_regulator_dead_band_internal
+  #   internal: true
+  #   address: 9
+  #   value_type: U_WORD
+
+  # OUT0 PRC (HR11)
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   name: "S88: Alarm: Proportional Regulator Constant"
+  #   id: alarm_proportional_regulator_constant
+  #   address: 10
+  #   value_type: U_WORD
+  #   min_value: 0
+  #   step: 1
+  #   max_value: 32767
+  #   mode: box
+  #   unit_of_measurement: "ppm"
+  #   lambda: |-
+  #     uint16_t high = static_cast<uint16_t>(data[item->offset] & 0x7F);
+  #     uint16_t low = static_cast<uint16_t>(data[item->offset+1]);
+  #     return (high << 8) | low;
+  #   write_lambda: |-
+  #     uint8_t shape_bit;
+  #     if (id(alarm_mirror_in_x_axis).state) {
+  #       shape_bit = 0x80;
+  #     } else {
+  #       shape_bit = 0x00;
+  #     }
+  #     uint16_t value = x;
+  #     uint16_t high = (value & 0xFF00) >> 8;
+  #     uint16_t low = value & 0xff;
+  #     return ((shape_bit|high) << 8) | low;
+
+  # OUT0 PRC (HR11)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    id: alarm_proportional_regulator_constant_internal
+    internal: true
+    address: 10
+    value_type: U_WORD
+
+  # OUT1 RDB (HR12)
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   name: "S88: PWM: Regulator Dead Band"
+  #   id: pwm_regulator_dead_band
+  #   address: 11
+  #   value_type: U_WORD
+  #   min_value: 0
+  #   step: 1
+  #   max_value: 32767
+  #   mode: box
+  #   unit_of_measurement: "ppm"
+  #   lambda: |-
+  #     uint16_t high = static_cast<uint16_t>(data[item->offset] & 0x7F);
+  #     uint16_t low = static_cast<uint16_t>(data[item->offset+1]);
+  #     return (high << 8) | low;
+  #   write_lambda: |-
+  #     uint8_t shape_bit;
+  #     if (id(pwm_mirror_in_y_axis).state) {
+  #       shape_bit = 0x80;
+  #     } else {
+  #       shape_bit = 0x00;
+  #     }
+  #     uint16_t value = x;
+  #     uint16_t high = (value & 0xFF00) >> 8;
+  #     uint16_t low = value & 0xff;
+  #     return ((shape_bit|high) << 8) | low;
+
+  # OUT1 RDB (HR12)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    id: pwm_regulator_dead_band_internal
+    internal: true
+    address: 11
+    value_type: U_WORD
+
+  # OUT1 PRC (HR13)
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   name: "S88: PWM: Proportional Regulator Constant"
+  #   id: pwm_proportional_regulator_constant
+  #   address: 12
+  #   value_type: U_WORD
+  #   min_value: 0
+  #   step: 1
+  #   max_value: 32767
+  #   mode: box
+  #   unit_of_measurement: "ppm"
+  #   lambda: |-
+  #     uint16_t high = static_cast<uint16_t>(data[item->offset] & 0x7F);
+  #     uint16_t low = static_cast<uint16_t>(data[item->offset+1]);
+  #     return (high << 8) | low;
+  #   write_lambda: |-
+  #     uint8_t shape_bit;
+  #     if (id(pwm_mirror_in_x_axis).state) {
+  #       shape_bit = 0x80;
+  #     } else {
+  #       shape_bit = 0x00;
+  #     }
+  #     uint16_t value = x;
+  #     uint16_t high = (value & 0xFF00) >> 8;
+  #     uint16_t low = value & 0xff;
+  #     return ((shape_bit|high) << 8) | low;
+
+  # OUT1 PRC (HR13)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    id: pwm_proportional_regulator_constant_internal
+    address: 12
+    value_type: U_WORD
+
+  # OUT1 MinLimit (HR14)
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   name: "S88: PWM: Min output duty cycle"
+  #   address: 13
+  #   value_type: U_WORD
+  #   min_value: 0
+  #   step: 1
+  #   max_value: 100
+  #   mode: box
+  #   lambda: "return x * 100.0 / 16383.0;"
+  #   write_lambda: "return x * 16383.0 / 100.0;"
+  #   unit_of_measurement: "%"
+
+  # OUT1 MaxLimit (HR15)
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   name: "S88: PWM: Max output duty cycle"
+  #   address: 14
+  #   value_type: U_WORD
+  #   min_value: 0
+  #   step: 1
+  #   max_value: 100
+  #   mode: box
+  #   lambda: "return x * 100.0 / 16383.0;"
+  #   write_lambda: "return x * 16383.0 / 100.0;"
+  #   unit_of_measurement: "%"
+
+  # OUT1 Offset (HR16)
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   name: "S88: PWM: Offset"
+  #   address: 15
+  #   value_type: U_WORD
+  #   min_value: 0
+  #   step: 1
+  #   max_value: 100
+  #   mode: box
+  #   lambda: "return x * 100.0 / 16383.0;"
+  #   write_lambda: "return x * 16383.0 / 100.0;"
+  #   unit_of_measurement: "%"
+
+  # OUT1 Override (HR22)
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   name: "S88: PWM: Override"
+  #   address: 21
+  #   value_type: U_WORD
+  #   min_value: 0
+  #   step: 1
+  #   max_value: 100
+  #   mode: box
+  #   lambda: |-
+  #     if(x==65535)
+  #       return NAN;
+  #     return x * 100.0 / 16383.0;
+  #   write_lambda: "return x * 16383.0 / 100.0;"
+  #   unit_of_measurement: "%"
+
+  # Acknowledgement register (HR1)
+  - platform: modbus_controller
+    id: s88_acknowledgement_register
+    modbus_controller_id: s88_modbus_controller
+    internal: true
+    address: 0
+    value_type: U_WORD
+
+switch:
+  # OUT0 RDB (HR10)
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   name: "S88: Alarm: Mirror in y-axis"
+  #   id: alarm_mirror_in_y_axis
+  #   register_type: holding
+  #   address: 9
+  #   bitmask: 0x8000
+  #   restore_mode: DISABLED
+  #   write_lambda: |-
+  #     uint16_t number = (uint16_t)id(alarm_regulator_dead_band).state;
+  #     uint16_t value;
+  #     if(x)
+  #       value = number | 0x8000;
+  #     else
+  #       value = number;
+  #     auto call = id(alarm_regulator_dead_band_internal).make_call();
+  #     call.set_value(value);
+  #     call.perform();
+  #     return {};
+
+  # OUT0 PRC (HR11)
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   name: "S88: Alarm: Mirror in x-axis"
+  #   id: alarm_mirror_in_x_axis
+  #   register_type: holding
+  #   address: 10
+  #   bitmask: 0x8000
+  #   restore_mode: DISABLED
+  #   write_lambda: |-
+  #     uint16_t number = (uint16_t)id(alarm_proportional_regulator_constant).state;
+  #     uint16_t value;
+  #     if(x)
+  #       value = number | 0x8000;
+  #     else
+  #       value = number;
+  #     auto call = id(alarm_proportional_regulator_constant_internal).make_call();
+  #     call.set_value(value);
+  #     call.perform();
+  #     return {};
+
+  # OUT1 RDB (HR12)
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   name: "S88: PWM: Mirror in y-axis"
+  #   id: pwm_mirror_in_y_axis
+  #   register_type: holding
+  #   address: 11
+  #   bitmask: 0x8000
+  #   restore_mode: DISABLED
+  #   write_lambda: |-
+  #     uint16_t number = (uint16_t)id(pwm_regulator_dead_band).state;
+  #     uint16_t value;
+  #     if(x)
+  #       value = number | 0x8000;
+  #     else
+  #       value = number;
+  #     auto call = id(pwm_regulator_dead_band_internal).make_call();
+  #     call.set_value(value);
+  #     call.perform();
+  #     return {};
+
+  # OUT1 PRC (HR13)
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   name: "S88: PWM: Mirror in x-axis"
+  #   id: pwm_mirror_in_x_axis
+  #   register_type: holding
+  #   address: 12
+  #   bitmask: 0x8000
+  #   restore_mode: DISABLED
+  #   write_lambda: |-
+  #     uint16_t number = (uint16_t)id(pwm_proportional_regulator_constant).state;
+  #     uint16_t value;
+  #     if(x)
+  #       value = number | 0x8000;
+  #     else
+  #       value = number;
+  #     auto call = id(pwm_proportional_regulator_constant_internal).make_call();
+  #     call.set_value(value);
+  #     call.perform();
+  #     return {};
+
+button:
+  # Acknowledgement register (HR1)
+  - platform: template
+    name: "S88: Calibration: Acknowledgement: Clear"
+    on_press:
+      - lambda: id(s88_acknowledgement_register).make_call().set_value(0).perform();
+
+  # Reset CO₂ calibration to factory defaults (HR2/0x7C/0x1)
+  - platform: template
+    name: "S88: Calibration: Reset CO₂ calibration to factory defaults"
+    on_press:
+      - lambda: |-
+          auto modbus_controller = id(s88_modbus_controller);
+          auto modbus_command_item = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+            modbus_controller,
+            0x01,
+            0x7C01
+          );
+          modbus_controller->queue_command(modbus_command_item);
+
+  # Force ABC calibration (HR2/0x7C/0x3)
+  - platform: template
+    name: "S88: Calibration: ABC: Force"
+    on_press:
+      - lambda: |-
+          auto modbus_controller = id(s88_modbus_controller);
+          auto modbus_command_item = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+            modbus_controller,
+            0x01,
+            0x7C03
+          );
+          modbus_controller->queue_command(modbus_command_item);
+
+  # CO₂ target calibration has been performed (HR1/CI5)
+  - platform: template
+    name: "S88: Calibration: Target"
+    on_press:
+      - lambda: |-
+          auto modbus_controller = id(s88_modbus_controller);
+          auto modbus_command_item = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+            modbus_controller,
+            0x01,
+            0x7C05
+          );
+          modbus_controller->queue_command(modbus_command_item);
+
+  # CO₂ background calibration (HR2/0x7C/0x6)
+  - platform: template
+    name: "S88: Calibration: Background"
+    on_press:
+      - lambda: |-
+          auto modbus_controller = id(s88_modbus_controller);
+          auto modbus_command_item = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+            modbus_controller,
+            0x01,
+            0x7C06
+          );
+          modbus_controller->queue_command(modbus_command_item);
+
+  # CO₂ zero calibration (HR2/0x7C/0x7)
+  - platform: template
+    name: "S88: Calibration: Zero"
+    on_press:
+      - lambda: |-
+          auto modbus_controller = id(s88_modbus_controller);
+          auto modbus_command_item = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+            modbus_controller,
+            0x01,
+            0x7C07
+          );
+          modbus_controller->queue_command(modbus_command_item);
+
+text_sensor:
+  # FW version (IR29)
+  - platform: modbus_controller
+    modbus_controller_id: s88_modbus_controller
+    name: "S88: FW Version"
+    raw_encode: NONE
+    register_type: "read"
+    address: 28
+    response_size: 2
+    lambda: |-
+      return std::to_string(data[item->offset]) + "." + std::to_string(data[item->offset+1]);

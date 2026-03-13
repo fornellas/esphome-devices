@@ -1,0 +1,8 @@
+sensor:
+  - platform: sht3xd
+    address: ${sht3xd_address}
+    temperature:
+      name: "${sht3xd_model}: Temperature"
+    humidity:
+      name: "${sht3xd_model}: Humidity"
+    update_interval: 1s

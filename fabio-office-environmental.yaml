@@ -1,0 +1,8 @@
+substitutions:
+  ota_password: !secret fabio-office-environmental_ota_password
+  api_encryption_key: !secret fabio-office-environmental_api_encryption_key
+packages:
+  - !include packages/devices/environmental-v2.yaml
+esphome:
+  name: fabio-office-environmental
+  friendly_name: "Fabio's Office Environmental"
