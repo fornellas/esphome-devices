@@ -1,9 +1,0 @@
-substitutions:
-  ota_password: !secret living_room_light_switch_ota_password
-  api_encryption_key: !secret living_room_light_switch_api_encryption_key
-packages:
-  - !include packages/common.yaml
-  - !include packages/athom-1gang-switch.yaml
-esphome:
-  name: living_room_light_switch
-  friendly_name: living_room_light_switch
