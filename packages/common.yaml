@@ -1,3 +1,9 @@
+esphome:
+  on_boot:
+    priority: 1000.0
+    then:
+      - logger.set_level: INFO
+
 binary_sensor:
   - platform: status
     name: "Status"
@@ -15,6 +21,7 @@ button:
 
 logger:
   baud_rate: 0
+
 debug:
 
 sensor:
