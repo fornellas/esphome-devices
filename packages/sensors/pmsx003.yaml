@@ -1,6 +1,6 @@
 esphome:
   on_boot:
-    - priority: 800.0
+    - priority: 600.0
       then:
         - script.execute: pmsx003_reset_script
 
