@@ -749,6 +749,7 @@ button:
           );
           modbus_controller->queue_command(modbus_command_item);
     icon: mdi:restore
+    entity_category: config
 
   # Force ABC calibration (HR2/0x7C/0x3)
   - platform: template
