@@ -1,0 +1,39 @@
+sensor:
+  - platform: wifi_signal
+    name: "WiFi: Signal"
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "WiFi: IP Address"
+      address_0:
+        name: "WiFi: IP Address 0"
+      address_1:
+        name: "WiFi: IP Address 1"
+      address_2:
+        name: "WiFi: IP Address 2"
+      address_3:
+        name: "WiFi: IP Address 3"
+      address_4:
+        name: "WiFi: IP Address 4"
+    ssid:
+      name: "WiFi: SSID"
+    bssid:
+      name: "WiFi: BSSID"
+    mac_address:
+      name: "WiFi: MAC Address"
+    # scan_results:
+    #   name: "WiFi: Scan Results"
+    dns_address:
+      name: "WiFi: DNS Address"
+    power_save_mode:
+      name: "WiFi: Power Save Mode"
+
+wifi:
+  id: wifi_component
+  reboot_timeout: 0s
+  power_save_mode: none
+  enable_btm: true
+  enable_rrm: true
+  ap:
+    ap_timeout: 0s
