@@ -8,8 +8,8 @@ substitutions:
 
 packages:
   - !include ../common.yaml
-  # - !include ../sensors/s88.yaml
-  # - !include ../sensors/sht3xd.yaml
+  - !include ../sensors/s88.yaml
+  - !include ../sensors/sht3xd.yaml
   - !include ../sensors/pmsx003.yaml
 
 esphome:
@@ -123,45 +123,45 @@ i2c:
   scan: false
 
 sensor:
-  # - platform: template
-  #   name: "AQI"
-  #   unit_of_measurement: "AQI"
-  #   icon: "mdi:gauge"
-  #   lambda: |-
-  #     double aqi = -1;
+  - platform: template
+    name: "AQI"
+    unit_of_measurement: "AQI"
+    icon: "mdi:gauge"
+    lambda: |-
+      double aqi = -1;
 
-  #     if (id(s88_aqi).state != NAN && id(s88_aqi).state > aqi)
-  #       aqi = id(s88_aqi).state;
+      if (id(s88_aqi).state != NAN && id(s88_aqi).state > aqi)
+        aqi = id(s88_aqi).state;
 
-  #     if (id(pmsx003_aqi).state != NAN && id(pmsx003_aqi).state > aqi)
-  #       aqi = id(pmsx003_aqi).state;
+      if (id(pmsx003_aqi).state != NAN && id(pmsx003_aqi).state > aqi)
+        aqi = id(pmsx003_aqi).state;
 
-  #     if(aqi >= 0.0)
-  #       return aqi;
-  #     return NAN;
-  #   update_interval: 1s
-  #   on_value:
-  #     then:
-  #       - lambda: |-
-  #           if (x == NAN) {
-  #             id(white_led_light).turn_on().set_effect("fast_strobe").perform();
-  #             id(yellow_led_light).turn_on().set_effect("fast_strobe").perform();
-  #           }
-  #           if (x < 1.5) {
-  #             id(white_led_light).turn_off().perform();
-  #             id(white_led_light).turn_on().perform();
-  #             id(yellow_led_light).turn_off().perform();
-  #           }
-  #           if (x >= 1.5 && x < 3) {
-  #             id(white_led_light).turn_off().perform();
-  #             id(yellow_led_light).turn_off().perform();
-  #             id(yellow_led_light).turn_on().perform();
-  #           }
-  #           if (x > 3) {
-  #             id(white_led_light).turn_off().perform();
-  #             id(yellow_led_light).turn_off().perform();
-  #             id(yellow_led_light).turn_on().set_effect("fast_strobe").perform();
-  #           }
+      if(aqi >= 0.0)
+        return aqi;
+      return NAN;
+    update_interval: 1s
+    on_value:
+      then:
+        - lambda: |-
+            if (x == NAN) {
+              id(white_led_light).turn_on().set_effect("fast_strobe").perform();
+              id(yellow_led_light).turn_on().set_effect("fast_strobe").perform();
+            }
+            if (x < 1.5) {
+              id(white_led_light).turn_off().perform();
+              id(white_led_light).turn_on().perform();
+              id(yellow_led_light).turn_off().perform();
+            }
+            if (x >= 1.5 && x < 3) {
+              id(white_led_light).turn_off().perform();
+              id(yellow_led_light).turn_off().perform();
+              id(yellow_led_light).turn_on().perform();
+            }
+            if (x > 3) {
+              id(white_led_light).turn_off().perform();
+              id(yellow_led_light).turn_off().perform();
+              id(yellow_led_light).turn_on().set_effect("fast_strobe").perform();
+            }
 
 light:
   - platform: binary
