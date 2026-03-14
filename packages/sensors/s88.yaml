@@ -21,6 +21,8 @@ binary_sensor:
     register_type: read
     address: 0x00
     bitmask: 0x01 # 1
+    entity_category: diagnostic
+    icon: mdi:alert-circle-outline
 
   # MeterStatus: Algorithm Error (IR1/DI3)
   - platform: modbus_controller
@@ -29,6 +31,8 @@ binary_sensor:
     register_type: read
     address: 0x00
     bitmask: 0x04 # 3
+    entity_category: diagnostic
+    icon: mdi:alert-circle-outline
 
   # MeterStatus: Output Error (IR1/DI4)
   - platform: modbus_controller
@@ -37,6 +41,8 @@ binary_sensor:
     register_type: read
     address: 0x00
     bitmask: 0x08 # 4
+    entity_category: diagnostic
+    icon: mdi:alert-circle-outline
 
   # MeterStatus: Self diagnostics error (IR1/DI5)
   - platform: modbus_controller
@@ -45,6 +51,8 @@ binary_sensor:
     register_type: read
     address: 0x00
     bitmask: 0x10 # 5
+    entity_category: diagnostic
+    icon: mdi:alert-circle-outline
 
   # MeterStatus: Out Of Range (IR1/DI6)
   - platform: modbus_controller
@@ -53,6 +61,8 @@ binary_sensor:
     register_type: read
     address: 0x00
     bitmask: 0x20 # 6
+    entity_category: diagnostic
+    icon: mdi:alert-circle-outline
 
   # MeterStatus: Memory error (IR1/DI7)
   - platform: modbus_controller
@@ -61,6 +71,8 @@ binary_sensor:
     register_type: read
     address: 0x00
     bitmask: 0x40 # 7
+    entity_category: diagnostic
+    icon: mdi:alert-circle-outline
 
   # MeterStatus: Warm Up (IR1/DI8)
   - platform: modbus_controller
@@ -69,6 +81,8 @@ binary_sensor:
     register_type: read
     address: 0x00
     bitmask: 0x80 # 8
+    entity_category: diagnostic
+    icon: mdi:heat-wave
 
   # Alarm Output satus (IR3/DI33)
   # - platform: modbus_controller
@@ -91,6 +105,8 @@ binary_sensor:
   - platform: template
     name: "S88: Offline"
     id: s88_offline
+    entity_category: diagnostic
+    icon: mdi:cloud-off-outline
 
   # Acknowledgement register: Reset calibration has been performed (HR1/CI1)
   - platform: modbus_controller
@@ -99,6 +115,8 @@ binary_sensor:
     register_type: holding
     address: 0
     bitmask: 0x01 # 1
+    entity_category: diagnostic
+    icon: mdi:check-outline
 
   # Force ABC calibration has been performed (HR1/CI3)
   - platform: modbus_controller
@@ -107,6 +125,8 @@ binary_sensor:
     register_type: holding
     address: 0
     bitmask: 0x04 # 3
+    entity_category: diagnostic
+    icon: mdi:check-outline
 
   # Acknowledgement register: CO₂ target calibration (HR2/0x7C/0x5)
   - platform: modbus_controller
@@ -115,6 +135,8 @@ binary_sensor:
     register_type: holding
     address: 0
     bitmask: 0x10 # 5
+    entity_category: diagnostic
+    icon: mdi:check-outline
 
   # CO₂ background calibration has been performed (HR1/CI6)
   - platform: modbus_controller
@@ -123,6 +145,8 @@ binary_sensor:
     register_type: holding
     address: 0
     bitmask: 0x20 # 6
+    entity_category: diagnostic
+    icon: mdi:check-outline
 
   # CO₂ zero calibration has been performed (HR1/CI7)
   - platform: modbus_controller
@@ -131,6 +155,8 @@ binary_sensor:
     register_type: holding
     address: 0
     bitmask: 0x40 # 7
+    entity_category: diagnostic
+    icon: mdi:check-outline
 
 sensor:
   # Space CO₂ (IR4)
@@ -146,6 +172,8 @@ sensor:
       - lambda: |-
           if (x == 0) return NAN;
           return x;
+    device_class: carbon_dioxide
+    state_class: measurement
 
   - platform: template
     name: "S88: AQI"
@@ -178,6 +206,8 @@ sensor:
         return aqi;
       return NAN;
     update_interval: 1s
+    device_class: aqi
+    state_class: measurement
 
   # Space Temp (IR5)
   - platform: modbus_controller
@@ -193,6 +223,8 @@ sensor:
       - lambda: |-
           if (x > 200) return NAN;
           return x;
+    device_class: temperature
+    state_class: measurement
 
   # Synchro (IR6)
   - platform: modbus_controller
@@ -201,6 +233,9 @@ sensor:
     register_type: "read"
     address: 0x05
     value_type: U_WORD
+    state_class: measurement
+    icon: mdi:timer-outline
+    entity_category: diagnostic
 
   # Vbb (IR7)
   - platform: modbus_controller
@@ -213,6 +248,9 @@ sensor:
     accuracy_decimals: 3
     filters:
       - multiply: 0.001
+    device_class: voltage
+    state_class: measurement
+    entity_category: diagnostic
 
   # Elapsed Time counter (IR24,IR25)
   - platform: modbus_controller
@@ -223,6 +261,9 @@ sensor:
     register_count: 2
     value_type: U_DWORD
     unit_of_measurement: "h"
+    device_class: duration
+    state_class: measurement
+    entity_category: diagnostic
 
   # Memory Map Version (IR28)
   - platform: modbus_controller
@@ -231,6 +272,8 @@ sensor:
     register_type: "read"
     address: 27
     value_type: U_WORD
+    state_class: measurement
+    entity_category: diagnostic
 
   # Sensor ID (IR30,IR31)
   - platform: modbus_controller
@@ -240,6 +283,8 @@ sensor:
     address: 29
     register_count: 2
     value_type: U_DWORD
+    state_class: measurement
+    entity_category: diagnostic
 
   # PWM Output (IR22)
   # - platform: modbus_controller
@@ -260,6 +305,8 @@ sensor:
     register_count: 2
     value_type: U_DWORD
     bitmask: 0x0FFF
+    state_class: measurement
+    entity_category: diagnostic
 
 select:
   # Static IIR Config (HR28)
@@ -287,6 +334,7 @@ select:
       "15 static": 15
       "16 static": 16
       "factory default settings": 255
+    entity_category: config
 
 number:
   # Communication address (HR20)
@@ -316,6 +364,8 @@ number:
       if(x<=0)
         return NAN;
       return x;
+    entity_category: config
+    device_class: atmospheric_pressure
 
   # Default pressure (HR27)
   - platform: modbus_controller
@@ -333,6 +383,8 @@ number:
       if(x<=0)
         return NAN;
       return x;
+    entity_category: config
+    device_class: atmospheric_pressure
 
   # ABC Period (HR32)
   - platform: modbus_controller
@@ -349,6 +401,8 @@ number:
       if(x==0)
         return NAN;
       return x;
+    entity_category: config
+    device_class: duration
 
   # ABC Target (HR33)
   - platform: modbus_controller
@@ -361,6 +415,8 @@ number:
     step: 1
     max_value: 65535
     mode: box
+    entity_category: config
+    device_class: carbon_dioxide
 
   # Calibration Target Register (HR3)
   - platform: modbus_controller
@@ -373,6 +429,8 @@ number:
     step: 1
     max_value: 65535
     mode: box
+    entity_category: config
+    device_class: carbon_dioxide
 
   # OUT0 RDB (HR10)
   # - platform: modbus_controller
@@ -439,12 +497,12 @@ number:
   #     return ((shape_bit|high) << 8) | low;
 
   # OUT0 PRC (HR11)
-  - platform: modbus_controller
-    modbus_controller_id: s88_modbus_controller
-    id: alarm_proportional_regulator_constant_internal
-    internal: true
-    address: 10
-    value_type: U_WORD
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   id: alarm_proportional_regulator_constant_internal
+  #   internal: true
+  #   address: 10
+  #   value_type: U_WORD
 
   # OUT1 RDB (HR12)
   # - platform: modbus_controller
@@ -475,12 +533,12 @@ number:
   #     return ((shape_bit|high) << 8) | low;
 
   # OUT1 RDB (HR12)
-  - platform: modbus_controller
-    modbus_controller_id: s88_modbus_controller
-    id: pwm_regulator_dead_band_internal
-    internal: true
-    address: 11
-    value_type: U_WORD
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   id: pwm_regulator_dead_band_internal
+  #   internal: true
+  #   address: 11
+  #   value_type: U_WORD
 
   # OUT1 PRC (HR13)
   # - platform: modbus_controller
@@ -511,11 +569,11 @@ number:
   #     return ((shape_bit|high) << 8) | low;
 
   # OUT1 PRC (HR13)
-  - platform: modbus_controller
-    modbus_controller_id: s88_modbus_controller
-    id: pwm_proportional_regulator_constant_internal
-    address: 12
-    value_type: U_WORD
+  # - platform: modbus_controller
+  #   modbus_controller_id: s88_modbus_controller
+  #   id: pwm_proportional_regulator_constant_internal
+  #   address: 12
+  #   value_type: U_WORD
 
   # OUT1 MinLimit (HR14)
   # - platform: modbus_controller
@@ -675,6 +733,8 @@ button:
     name: "S88: Calibration: Acknowledgement: Clear"
     on_press:
       - lambda: id(s88_acknowledgement_register).make_call().set_value(0).perform();
+    icon: mdi:notification-clear-all
+    entity_category: config
 
   # Reset CO₂ calibration to factory defaults (HR2/0x7C/0x1)
   - platform: template
@@ -688,6 +748,7 @@ button:
             0x7C01
           );
           modbus_controller->queue_command(modbus_command_item);
+    icon: mdi:restore
 
   # Force ABC calibration (HR2/0x7C/0x3)
   - platform: template
@@ -701,6 +762,8 @@ button:
             0x7C03
           );
           modbus_controller->queue_command(modbus_command_item);
+    icon: mdi:play-outline
+    entity_category: config
 
   # CO₂ target calibration has been performed (HR1/CI5)
   - platform: template
@@ -714,6 +777,8 @@ button:
             0x7C05
           );
           modbus_controller->queue_command(modbus_command_item);
+    icon: mdi:target
+    entity_category: config
 
   # CO₂ background calibration (HR2/0x7C/0x6)
   - platform: template
@@ -727,6 +792,8 @@ button:
             0x7C06
           );
           modbus_controller->queue_command(modbus_command_item);
+    icon: mdi:cloud
+    entity_category: config
 
   # CO₂ zero calibration (HR2/0x7C/0x7)
   - platform: template
@@ -740,6 +807,8 @@ button:
             0x7C07
           );
           modbus_controller->queue_command(modbus_command_item);
+    icon: mdi:numeric-0
+    entity_category: config
 
 text_sensor:
   # FW version (IR29)
@@ -752,3 +821,6 @@ text_sensor:
     response_size: 2
     lambda: |-
       return std::to_string(data[item->offset]) + "." + std::to_string(data[item->offset+1]);
+    icon: mdi:chip
+    state_class: measurement
+    entity_category: diagnostic
