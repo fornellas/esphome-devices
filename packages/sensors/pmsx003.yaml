@@ -20,43 +20,37 @@ sensor:
     uart_id: uart_pmsx003
     pm_1_0_std:
       name: "${pmsx003_model}: PM1.0 (CF=1，standard particle)"
-      unit_of_measurement: "μg/m³"
     pm_2_5_std:
       name: "${pmsx003_model}: PM2.5 (CF=1，standard particle)"
-      unit_of_measurement: "μg/m³"
     pm_10_0_std:
       name: "${pmsx003_model}: PM10.0 (CF=1，standard particle)"
-      unit_of_measurement: "μg/m³"
     pm_1_0:
       name: "${pmsx003_model}: PM1.0 (under atmospheric environment)"
-      unit_of_measurement: "μg/m³"
     pm_2_5:
       name: "${pmsx003_model}: PM2.5 (under atmospheric environment)"
-      unit_of_measurement: "μg/m³"
       id: pmsx003_pm25
+      on_value:
+        then:
+          - component.update: pmsx003_aqi
     pm_10_0:
       name: "${pmsx003_model}: PM10.0 (under atmospheric environment)"
-      unit_of_measurement: "μg/m³"
       id: pmsx003_pm10
+      on_value:
+        then:
+          - component.update: pmsx003_aqi
     pm_0_3um:
       name: "${pmsx003_model}: Number of particles with diameter beyond 0.3μm in 0.1 L of air"
-      unit_of_measurement: ""
     pm_0_5um:
       name: "${pmsx003_model}: Number of particles with diameter beyond 0.5μm in 0.1 L of air"
-      unit_of_measurement: ""
     pm_1_0um:
       name: "${pmsx003_model}: Number of particles with diameter beyond 1.0μm in 0.1 L of air"
-      unit_of_measurement: ""
     pm_2_5um:
       name: "${pmsx003_model}: Number of particles with diameter beyond 2.5μm in 0.1 L of air"
-      unit_of_measurement: ""
     pm_5_0um:
       name: "${pmsx003_model}: Number of particles with diameter beyond 5.0μm in 0.1 L of air"
-      unit_of_measurement: ""
     pm_10_0um:
       name: "${pmsx003_model}: Number of particles with diameter beyond 10.0μm in 0.1 L of air"
-      unit_of_measurement: ""
-    update_interval: 60s
+    update_interval: 2min
 
   - platform: template
     name: "${pmsx003_model}: AQI"
@@ -109,7 +103,7 @@ sensor:
       if(aqi >= 0.0)
         return aqi;
       return NAN;
-    update_interval: 2m
+    update_interval: never
 
 output:
   - platform: gpio
