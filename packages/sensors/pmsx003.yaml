@@ -18,7 +18,6 @@ sensor:
   - platform: pmsx003
     type: PMSX003
     uart_id: uart_pmsx003
-    update_interval: 2m
     pm_1_0_std:
       name: "${pmsx003_model}: PM1.0 (CF=1，standard particle)"
       unit_of_measurement: "μg/m³"
@@ -110,7 +109,7 @@ sensor:
       if(aqi >= 0.0)
         return aqi;
       return NAN;
-    update_interval: 1s
+    update_interval: 2m
 
 output:
   - platform: gpio
