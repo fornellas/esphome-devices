@@ -822,5 +822,4 @@ text_sensor:
     lambda: |-
       return std::to_string(data[item->offset]) + "." + std::to_string(data[item->offset+1]);
     icon: mdi:chip
-    state_class: measurement
     entity_category: diagnostic
