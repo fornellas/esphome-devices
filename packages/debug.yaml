@@ -1,0 +1,25 @@
+debug:
+
+sensor:
+  - platform: debug
+    free:
+      name: "Debug: Heap Free"
+    block:
+      name: "Debug: Heap Max Block"
+    min_free:
+      name: "Debug: Heap Min Free"
+    fragmentation:
+      name: "Debug: Heap Fragmentation"
+    loop_time:
+      name: "Debug: Loop Time"
+    # psram:
+    #   name: "Debug: Free PSRAM"
+    cpu_frequency:
+      name: "Debug: CPU Frequency"
+
+text_sensor:
+  - platform: debug
+    device:
+      name: "Debug: Device"
+    reset_reason:
+      name: "Debug: Reset Reason"
