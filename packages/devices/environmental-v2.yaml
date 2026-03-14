@@ -125,8 +125,6 @@ i2c:
 sensor:
   - platform: template
     name: "AQI"
-    unit_of_measurement: "AQI"
-    icon: "mdi:gauge"
     lambda: |-
       double aqi = -1;
 
@@ -162,6 +160,9 @@ sensor:
               id(yellow_led_light).turn_off().perform();
               id(yellow_led_light).turn_on().set_effect("fast_strobe").perform();
             }
+    icon: "mdi:gauge"
+    device_class: aqi
+    state_class: measurement
 
 light:
   - platform: binary

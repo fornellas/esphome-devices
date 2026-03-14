@@ -76,8 +76,6 @@ i2c:
 sensor:
   - platform: template
     name: "AQI"
-    unit_of_measurement: "AQI"
-    icon: "mdi:gauge"
     lambda: |-
       double aqi = -1;
 
@@ -97,6 +95,9 @@ sensor:
               id(aqi_led).set_level(0);
             double level = (x - 1.0) / 5.0;
             id(aqi_led).set_level(level);
+    icon: "mdi:gauge"
+    device_class: aqi
+    state_class: measurement
 
 output:
   - platform: slow_pwm
