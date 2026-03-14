@@ -178,8 +178,6 @@ sensor:
   - platform: template
     name: "S88: AQI"
     id: s88_aqi
-    unit_of_measurement: "AQI"
-    icon: "mdi:gauge"
     lambda: |-
       double aqi = -1;
 
@@ -206,6 +204,7 @@ sensor:
         return aqi;
       return NAN;
     update_interval: 1s
+    icon: "mdi:gauge"
     device_class: aqi
     state_class: measurement
 
@@ -216,7 +215,7 @@ sensor:
     register_type: "read"
     address: 0x04
     value_type: U_WORD
-    unit_of_measurement: "C"
+    unit_of_measurement: "°C"
     accuracy_decimals: 2
     filters:
       - multiply: 0.01

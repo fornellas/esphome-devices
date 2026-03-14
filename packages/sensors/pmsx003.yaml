@@ -54,9 +54,7 @@ sensor:
 
   - platform: template
     name: "${pmsx003_model}: AQI"
-    icon: "mdi:gauge"
     id: pmsx003_aqi
-    unit_of_measurement: "AQI"
     lambda: |-
       double aqi = -1;
 
@@ -104,6 +102,9 @@ sensor:
         return aqi;
       return NAN;
     update_interval: never
+    icon: "mdi:gauge"
+    device_class: aqi
+    state_class: measurement
 
 output:
   - platform: gpio
