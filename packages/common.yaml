@@ -1,4 +1,5 @@
 packages:
+  - !include debug.yaml
   - !include logger.yaml
   - !include wifi.yaml
 
@@ -20,8 +21,6 @@ button:
   - platform: shutdown
     name: "Shutdown"
 
-debug:
-
 sensor:
   - platform: internal_temperature
     name: "Internal Temperature"
@@ -29,34 +28,12 @@ sensor:
   - platform: uptime
     name: "Uptime"
 
-  - platform: debug
-    free:
-      name: "Debug: Heap Free"
-    block:
-      name: "Debug: Heap Max Block"
-    min_free:
-      name: "Debug: Heap Min Free"
-    fragmentation:
-      name: "Debug: Heap Fragmentation"
-    loop_time:
-      name: "Debug: Loop Time"
-    # psram:
-    #   name: "Debug: Free PSRAM"
-    cpu_frequency:
-      name: "Debug: CPU Frequency"
-
 text_sensor:
   - platform: uptime
     name: Uptime
 
   - platform: version
     name: "ESPHome Version"
-
-  - platform: debug
-    device:
-      name: "Debug: Device"
-    reset_reason:
-      name: "Debug: Reset Reason"
 
 factory_reset:
   resets_required: 5
