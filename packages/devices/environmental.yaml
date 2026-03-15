@@ -8,13 +8,11 @@ substitutions:
   sht3xd_model: "SHT31"
 
 packages:
-  - !include common.yaml
+  - !include ../common.yaml
   # TODO review attributes (class, unit etc)
-  - !include mhz19.yaml
-  # TODO review attributes (class, unit etc)
-  - !include sht3xd.yaml
-  # TODO review attributes (class, unit etc)
-  - !include pmsx003.yaml
+  - !include ../sensors/mhz19.yaml
+  - !include ../sensors/sht3xd.yaml
+  - !include ../sensors/pmsx003.yaml
 
 esphome:
   on_boot:

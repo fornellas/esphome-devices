@@ -99,14 +99,14 @@ sensor:
           if(millis() < ${mhz19_warmup} * 1000)
             return NAN;
 
-          if (id(mhz19_detection_range).state == "Default")
+          if (id(mhz19_detection_range).current_option() == "Default")
             return NAN;
           double mul;
-          if (id(mhz19_detection_range).state == "0-2000ppm")
+          if (id(mhz19_detection_range).current_option() == "0-2000ppm")
             mul = 2.0;
-          else if (id(mhz19_detection_range).state == "0-5000ppm")
+          else if (id(mhz19_detection_range).current_option() == "0-5000ppm")
             mul = 5.0;
-          else if (id(mhz19_detection_range).state == "0-10000ppm")
+          else if (id(mhz19_detection_range).current_option() == "0-10000ppm")
             mul = 10.0;
 
           auto ppm = (x/100.0*1004.0-2.0)*mul;
