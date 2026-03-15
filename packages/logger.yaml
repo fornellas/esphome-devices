@@ -1,11 +1,3 @@
-esphome:
-  on_boot:
-    priority: -100
-    then:
-      - select.set:
-          id: logger_select
-          option: "INFO"
-
 logger:
   baud_rate: 0
 
