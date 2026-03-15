@@ -1,0 +1,8 @@
+substitutions:
+  ota_password: !secret fabio-office-lamp_ota_password
+  api_encryption_key: !secret fabio-office-lamp_api_encryption_key
+packages:
+  - !include packages/devices/ultrabrite-smart-wifi-plug.yaml
+esphome:
+  name: fabio-office-lamp
+  friendly_name: "Fabio's Office Lamp"

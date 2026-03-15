@@ -1,12 +1,8 @@
 packages:
   - !include ../common.yaml
-  - !include ../sensors/cse7766.yaml
+  - !include ../common-bk72xx.yaml
 
 esphome:
-  platformio_options:
-    board_upload.flash_size: 2MB
-    board_upload.maximum_size: 2097152
-    board_build.ldscript: eagle.flash.2m.ld
   on_boot:
     - priority: 600.0
       then:
@@ -32,49 +28,44 @@ esphome:
               id(wifi_led_pwm).set_level(0.5);
           }
 
-esp8266:
-  board: esp8285
-  restore_from_flash: true
-
-uart:
-  rx_pin: RX
-  baud_rate: 4800
-  parity: EVEN
-  id: cse7766_uart
+bk72xx:
+  board: wb2s
 
 binary_sensor:
   - platform: gpio
-    id: button_gpio
+    id: relay_button
     pin:
-      number: 5
-      mode: INPUT_PULLUP
+      number: P6
       inverted: true
-    disabled_by_default: true
-    on_multi_click:
-      - timing:
-          - ON for at most 1s
-          - OFF for at least 0.2s
-        then:
-          - switch.toggle: power_switch
-      - timing:
-          - ON for at least 5s
-        then:
-          - button.press: button_factory_reset
+      mode: INPUT_PULLUP
+    on_press:
+      then:
+        - switch.toggle: relay
 
 output:
   - platform: slow_pwm
     id: wifi_led_pwm
     period: 1s
     pin:
-      number: GPIO13
+      number: P7
       inverted: true
+
+  - platform: gpio
+    pin:
+      number: P8
+      inverted: true
+    id: relay_led
 
 switch:
   - platform: gpio
-    pin: GPIO12
     name: "Power"
-    id: power_switch
+    id: relay
     icon: mdi:toggle-switch
+    pin: P24
+    restore_mode: RESTORE_DEFAULT_OFF
     entity_category: ""
     device_class: outlet
-    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_on:
+      - output.turn_on: relay_led
+    on_turn_off:
+      - output.turn_off: relay_led
