@@ -136,13 +136,6 @@ button:
         - delay: 2s
         - output.turn_off: mhz19_calibration_led
 
-  - platform: template
-    name: "MH19: Calibrate Zero"
-    entity_category: config
-    on_press:
-      then:
-        - script.execute: mhz19_calibrate_zero
-
 time:
   - platform: sntp
     id: sntp_time
