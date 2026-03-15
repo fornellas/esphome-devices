@@ -11,4 +11,5 @@ logger:
 
 select:
   - platform: logger
+    id: logger_select
     name: "Logger"
