@@ -1,5 +1,6 @@
 packages:
   - !include ../common.yaml
+  - !include ../common-esp32.yaml
 
 esp32:
   board: esp32-c3-devkitm-1

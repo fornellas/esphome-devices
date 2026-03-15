@@ -9,7 +9,7 @@ substitutions:
 
 packages:
   - !include ../common.yaml
-  # TODO review attributes (class, unit etc)
+  - !include ../common-esp32.yaml
   - !include ../sensors/mhz19.yaml
   - !include ../sensors/sht3xd.yaml
   - !include ../sensors/pmsx003.yaml

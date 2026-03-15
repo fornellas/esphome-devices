@@ -1,0 +1,7 @@
+packages:
+  - !include debug-esp32.yaml
+  - !include wifi-esp32.yaml
+
+sensor:
+  - platform: internal_temperature
+    name: "Internal Temperature"

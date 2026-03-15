@@ -6,8 +6,6 @@ sensor:
       name: "Debug: Heap Free"
     block:
       name: "Debug: Heap Max Block"
-    min_free:
-      name: "Debug: Heap Min Free"
     fragmentation:
       name: "Debug: Heap Fragmentation"
     loop_time:
