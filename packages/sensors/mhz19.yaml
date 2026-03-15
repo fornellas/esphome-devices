@@ -26,11 +26,6 @@ globals:
     restore_value: yes
     initial_value: "0"
 
-  - id: mhz19_abc
-    type: bool
-    restore_value: yes
-    initial_value: "false"
-
 script:
   - id: mhz19_calibrate_zero
     then:
@@ -195,18 +190,11 @@ switch:
   - platform: template
     name: "MH-Z19: ABC"
     entity_category: config
-    lambda: |-
-      return id(mhz19_abc);
     turn_on_action:
       - mhz19.abc_enable: mhz19_sensor
-      - globals.set:
-          id: mhz19_abc
-          value: "true"
     turn_off_action:
       - mhz19.abc_disable: mhz19_sensor
-      - globals.set:
-          id: mhz19_abc
-          value: "false"
+    restore_mode: RESTORE_DEFAULT_ON
 
 number:
   - platform: template
