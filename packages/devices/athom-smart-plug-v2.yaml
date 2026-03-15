@@ -1,0 +1,80 @@
+packages:
+  - !include ../common.yaml
+  - !include ../sensors/cse7766.yaml
+
+esphome:
+  platformio_options:
+    board_upload.flash_size: 2MB
+    board_upload.maximum_size: 2097152
+    board_build.ldscript: eagle.flash.2m.ld
+  on_boot:
+    - priority: 600.0
+      then:
+        - lambda: |-
+            // Default: Connecting
+            id(wifi_led_pwm).set_level(0.5);
+            id(wifi_led_pwm).set_period(1000);
+            id(wifi_led_pwm).turn_on();
+  on_loop:
+    then:
+      - lambda: |-
+          // Captive portal
+          if(id(wifi_component).has_ap() && !id(wifi_component).has_sta()) {
+            id(wifi_led_pwm).set_level(0.5);
+            id(wifi_led_pwm).set_period(200);
+          } else {
+            id(wifi_led_pwm).set_period(1000);
+            // Connected
+            if(id(wifi_component).is_connected())
+              id(wifi_led_pwm).set_level(1);
+            // Connecting
+            else
+              id(wifi_led_pwm).set_level(0.5);
+          }
+
+esp8266:
+  board: esp8285
+  restore_from_flash: true
+
+uart:
+  rx_pin: RX
+  baud_rate: 4800
+  parity: EVEN
+  id: cse7766_uart
+
+binary_sensor:
+  - platform: gpio
+    id: button_gpio
+    pin:
+      number: 5
+      mode: INPUT_PULLUP
+      inverted: true
+    disabled_by_default: true
+    on_multi_click:
+      - timing:
+          - ON for at most 1s
+          - OFF for at least 0.2s
+        then:
+          - switch.toggle: power_switch
+      - timing:
+          - ON for at least 5s
+        then:
+          - button.press: button_factory_reset
+
+output:
+  - platform: slow_pwm
+    id: wifi_led_pwm
+    period: 1s
+    pin:
+      number: GPIO13
+      inverted: true
+
+switch:
+  - platform: gpio
+    pin: GPIO12
+    name: "Power"
+    id: power_switch
+    icon: mdi:toggle-switch
+    entity_category: ""
+    device_class: outlet
+    restore_mode: RESTORE_DEFAULT_OFF

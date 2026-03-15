@@ -1,0 +1,8 @@
+substitutions:
+  ota_password: !secret fabio-office-desk-power_ota_password
+  api_encryption_key: !secret fabio-office-desk-power_api_encryption_key
+packages:
+  - !include packages/devices/athom-smart-plug-v2.yaml
+esphome:
+  name: fabio-office-desk-power
+  friendly_name: "Fabio's Office Desk Power"
