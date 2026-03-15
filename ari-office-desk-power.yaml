@@ -1,0 +1,8 @@
+substitutions:
+  ota_password: !secret ari-office-desk-power_ota_password
+  api_encryption_key: !secret ari-office-desk-power_api_encryption_key
+packages:
+  - !include packages/devices/athom-smart-plug-v2.yaml
+esphome:
+  name: ari-office-desk-power
+  friendly_name: "Ari's Office Desk Power"
