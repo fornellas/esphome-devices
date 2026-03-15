@@ -1,0 +1,52 @@
+packages:
+  - !include ../common.yaml
+  - !include ../common-esp32.yaml
+
+esphome:
+  on_boot:
+    - priority: 600.0
+      then:
+        - lambda: |-
+            // Default: Connecting
+            id(wifi_led_pwm).set_level(0.5);
+            id(wifi_led_pwm).set_period(1000);
+            id(wifi_led_pwm).turn_on();
+  on_loop:
+    then:
+      - lambda: |-
+          // Captive portal
+          if(id(wifi_component).has_ap() && !id(wifi_component).has_sta()) {
+            id(wifi_led_pwm).set_level(0.5);
+            id(wifi_led_pwm).set_period(200);
+          } else {
+            id(wifi_led_pwm).set_period(1000);
+            // Connected
+            if(id(wifi_component).is_connected())
+              id(wifi_led_pwm).set_level(1);
+            // Connecting
+            else
+              id(wifi_led_pwm).set_level(0.5);
+          }
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
+sensor:
+  - platform: duty_cycle
+    pin:
+      number: 2
+      inverted: true
+      mode:
+        pullup: true
+        input: true
+    name: Power LED
+    update_interval: 1s
+    icon: mdi:power
+
+output:
+  - platform: slow_pwm
+    id: wifi_led_pwm
+    period: 1s
+    pin: 7
