@@ -1,0 +1,8 @@
+substitutions:
+  ota_password: !secret fabio-office-computer-power-led_ota_password
+  api_encryption_key: !secret fabio-office-computer-power-led_api_encryption_key
+packages:
+  - !include packages/devices/power-led.yaml
+esphome:
+  name: fabio-office-computer-power-led
+  friendly_name: "Fabio's Office Computer Power LED"
