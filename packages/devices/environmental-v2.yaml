@@ -8,6 +8,7 @@ substitutions:
 
 packages:
   - !include ../common.yaml
+  - !include ../common-esp32.yaml
   - !include ../sensors/s88.yaml
   - !include ../sensors/sht3xd.yaml
   - !include ../sensors/pmsx003.yaml

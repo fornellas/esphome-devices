@@ -22,9 +22,6 @@ button:
     name: "Shutdown"
 
 sensor:
-  - platform: internal_temperature
-    name: "Internal Temperature"
-
   - platform: uptime
     name: "Uptime"
 
