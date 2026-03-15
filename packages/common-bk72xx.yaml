@@ -1,6 +1,5 @@
 packages:
   - !include debug-bk72xx.yaml
-  - !include wifi-bk72xx.yaml
 
 sensor:
   - platform: internal_temperature

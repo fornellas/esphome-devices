@@ -6,8 +6,6 @@ sensor:
       name: "Debug: Heap Free"
     block:
       name: "Debug: Heap Max Block"
-    fragmentation:
-      name: "Debug: Heap Fragmentation"
     loop_time:
       name: "Debug: Loop Time"
     # psram:
