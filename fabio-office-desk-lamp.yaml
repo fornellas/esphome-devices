@@ -1,0 +1,8 @@
+substitutions:
+  ota_password: !secret fabio-office-desk-lamp_ota_password
+  api_encryption_key: !secret fabio-office-desk-lamp_api_encryption_key
+packages:
+  - !include packages/devices/athom-rgbct-light.yaml
+esphome:
+  name: fabio-office-desk-lamp
+  friendly_name: "Fabio's Office Desk Lamp"
