@@ -1,0 +1,32 @@
+packages:
+  - !include ../common.yaml
+  - !include ../common-esp32.yaml
+  - !include ../sensors/cse7761.yaml
+
+esp32:
+  variant: esp32
+  framework:
+    type: esp-idf
+
+logger:
+  baud_rate: 115200
+
+uart:
+  tx_pin: GPIO26
+  rx_pin: GPIO25
+  baud_rate: 38400
+  parity: EVEN
+  stop_bits: 1
+  id: cse7761_uart
+# GPIO00	Push Button (HIGH = off, LOW = on)
+
+# GPIO05	TM1621 DA
+# GPIO17	TM1621 CS
+# GPIO18	TM1621 WR
+# GPIO23	TM1621 RD
+
+# GPIO13	Status LED (HIGH = off, LOW = on)
+
+# GPIO15	Wifi_LED
+
+# GPIO21	Relay1
