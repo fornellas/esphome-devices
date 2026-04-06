@@ -35,6 +35,7 @@ esphome:
 esp8266:
   board: esp8285
   restore_from_flash: true
+  early_pin_init: true
 
 uart:
   rx_pin: RX
