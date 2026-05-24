@@ -1,0 +1,8 @@
+substitutions:
+  ota_password: !secret power-led-36f7_ota_password
+  api_encryption_key: !secret power-led-36f7_api_encryption_key
+packages:
+  - !include packages/devices/power-led.yaml
+esphome:
+  name: power-led-36f7
+  friendly_name: "Power LED 36f7"
