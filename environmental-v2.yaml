@@ -1,0 +1,8 @@
+substitutions:
+  ota_password: !secret environmental-v2_ota_password
+  api_encryption_key: !secret environmental-v2_api_encryption_key
+packages:
+  - !include packages/devices/environmental-v2.yaml
+esphome:
+  name: environmental-v2
+  friendly_name: "Environmental V2"
