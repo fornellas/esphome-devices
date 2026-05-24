@@ -1,0 +1,8 @@
+substitutions:
+  ota_password: !secret ultrabrite-smart-wifi-plug-769d_ota_password
+  api_encryption_key: !secret ultrabrite-smart-wifi-plug-769d_api_encryption_key
+packages:
+  - !include packages/devices/ultrabrite-smart-wifi-plug.yaml
+esphome:
+  name: ultrabrite-smart-wifi-plug-769d
+  friendly_name: "Ultrabrite Smart Wifi Plug 769D"
