@@ -1,0 +1,8 @@
+substitutions:
+  ota_password: !secret athom-mini-switch-859b_ota_password
+  api_encryption_key: !secret athom-mini-switch-859b_api_encryption_key
+packages:
+  - !include packages/devices/athom-mini-switch.yaml
+esphome:
+  name: athom-mini-switch-859b
+  friendly_name: "Athom Mini Switch 859b"
