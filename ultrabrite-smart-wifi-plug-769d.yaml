@@ -5,4 +5,4 @@ packages:
   - !include packages/devices/ultrabrite-smart-wifi-plug.yaml
 esphome:
   name: ultrabrite-smart-wifi-plug-769d
-  friendly_name: "Ultrabrite Smart Wifi Plug 769D"
+  friendly_name: "Ultrabrite Smart Wifi Plug 769d"
