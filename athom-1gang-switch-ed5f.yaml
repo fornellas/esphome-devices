@@ -1,0 +1,8 @@
+substitutions:
+  ota_password: !secret athom-1gang-switch-ed5f_ota_password
+  api_encryption_key: !secret athom-1gang-switch-ed5f_api_encryption_key
+packages:
+  - !include packages/devices/athom-1gang-switch.yaml
+esphome:
+  name: athom-1gang-switch-ed5f
+  friendly_name: "Athom 1 Gang Switch ed5f"
