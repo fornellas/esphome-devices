@@ -5,3 +5,6 @@ packages:
 sensor:
   - platform: internal_temperature
     name: "Internal Temperature"
+
+wifi:
+  min_auth_mode: WPA2
