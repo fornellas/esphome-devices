@@ -1,8 +1,0 @@
-substitutions:
-  ota_password: !secret home-power_ota_password
-  api_encryption_key: !secret home-power_api_encryption_key
-packages:
-  - !include packages/devices/sonoff-pow-ring.yaml
-esphome:
-  name: home-power
-  friendly_name: Home Power
