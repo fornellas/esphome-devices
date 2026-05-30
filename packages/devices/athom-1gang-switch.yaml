@@ -3,6 +3,10 @@ packages:
   - !include ../common-esp32.yaml
 
 esphome:
+  platformio_options:
+    board_build.mcu: esp32c3
+    board_build.variant: esp32c3
+    board_build.flash_mode: dio
   on_boot:
     priority: 600.0
     then:
