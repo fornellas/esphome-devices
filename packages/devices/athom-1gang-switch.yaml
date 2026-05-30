@@ -94,23 +94,53 @@ light:
     id: light1
     output: light_template_output
 
+event:
+  - platform: template
+    name: "Button"
+    id: event_button
+    event_types:
+      - "Pressed once"
+      - "Pressed twice"
+      - "Held down"
+
 binary_sensor:
   - platform: gpio
-    name: "Button"
+    id: binary_sensor_button
+    internal: true
     pin:
       inverted: true
       number: GPIO20
       mode:
         input: true
         pullup: true
-    on_press:
-      then:
-        - if:
-            condition:
-              lambda: "return !id(decoupled_mode);"
-            then:
-              - switch.toggle: switch_relay
     on_multi_click:
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at least 0.25s
+        then:
+          - event.trigger:
+              id: event_button
+              event_type: "Pressed once"
+          - if:
+              condition:
+                lambda: "return !id(decoupled_mode);"
+              then:
+                - switch.toggle: switch_relay
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at most 0.25s
+          - ON for at most 0.5s
+          - OFF for at least 0.25s
+        then:
+          - event.trigger:
+              id: event_button
+              event_type: "Pressed twice"
+      - timing:
+          - ON for at least 1s
+        then:
+          - event.trigger:
+              id: event_button
+              event_type: "Held down"
       - timing:
           - ON for at least 15s
         then:
