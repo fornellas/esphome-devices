@@ -4,7 +4,7 @@ packages:
 
 esphome:
   on_boot:
-    priority: -100
+    priority: 600.0
     then:
       - if:
           condition:
