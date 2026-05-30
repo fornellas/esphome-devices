@@ -2,6 +2,16 @@ packages:
   - !include ../common.yaml
   - !include ../common-esp32.yaml
 
+esphome:
+  on_boot:
+    priority: 800
+    then:
+      - if:
+          condition:
+            lambda: "return id(decoupled_mode);"
+          then:
+            - switch.turn_on: switch_relay
+
 esp32:
   board: esp32-c3-devkitm-1
   flash_size: 4MB
@@ -9,51 +19,99 @@ esp32:
   framework:
     type: esp-idf
 
+globals:
+  - id: decoupled_mode
+    type: bool
+    restore_value: yes
+    initial_value: "false"
+
+status_led:
+  pin:
+    # This is a second bright blue LED.
+    number: GPIO9
+    inverted: true
+    ignore_strapping_warning: true
+    id: status_led_blue
+
+output:
+  - platform: gpio
+    # Whet this is high, dim red LED is lit.
+    # When this is low, first bright blue LED is lit.
+    pin: GPIO3
+    inverted: true
+    id: output_red_blue_led
+
+  - platform: template
+    id: light_template_output
+    type: binary
+    write_action:
+      - if:
+          condition:
+            lambda: "return state;"
+          then:
+            - switch.turn_on: switch_relay
+          else:
+            - if:
+                condition:
+                  lambda: "return id(decoupled_mode);"
+                then:
+                  - light.turn_on: light1
+                else:
+                  - switch.turn_off: switch_relay
+
+switch:
+  - platform: gpio
+    pin: GPIO5
+    id: switch_relay
+    internal: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_on:
+      - output.turn_on: output_red_blue_led
+      - light.turn_on: light1
+    on_turn_off:
+      - output.turn_off: output_red_blue_led
+      - light.turn_off: light1
+
+  - platform: template
+    name: "Decoupled Mode"
+    icon: "mdi:link-variant-off"
+    entity_category: config
+    lambda: |-
+      return id(decoupled_mode);
+    turn_on_action:
+      - globals.set:
+          id: decoupled_mode
+          value: "true"
+      - switch.turn_on: switch_relay
+    turn_off_action:
+      - globals.set:
+          id: decoupled_mode
+          value: "false"
+
+light:
+  - platform: binary
+    name: "Light"
+    id: light1
+    output: light_template_output
+
 binary_sensor:
   - platform: gpio
+    name: "Button"
     pin:
       inverted: true
       number: GPIO20
       mode:
         input: true
         pullup: true
-    name: "Button"
     on_press:
       then:
-        - light.toggle: light1
+        - if:
+            condition:
+              lambda: "return !id(decoupled_mode);"
+            then:
+              - switch.toggle: switch_relay
     on_multi_click:
       - timing:
-          - ON for at least 10s
+          - ON for at least 15s
         then:
           - button.press: button_factory_reset
-
-output:
-  - platform: gpio
-    pin: GPIO5
-    id: output_relay
-
-  - platform: ledc
-    pin: GPIO3
-    inverted: true
-    id: output_button_led
-
-status_led:
-  pin:
-    number: GPIO9
-    inverted: true
-    ignore_strapping_warning: true
-
-light:
-  - platform: binary
-    name: "Light"
-    id: light1
-    output: output_relay
-    on_turn_on:
-      - light.turn_on: light_button_led
-    on_turn_off:
-      - light.turn_off: light_button_led
-
-  - platform: monochromatic
-    id: light_button_led
-    output: output_button_led
-    default_transition_length: 0ms
