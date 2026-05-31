@@ -1,3 +1,4 @@
+# INFO this saving state of decoupled mode seems broken in this hardware
 substitutions:
   ota_password: !secret athom-1gang-switch-116a_ota_password
   api_encryption_key: !secret athom-1gang-switch-116a_api_encryption_key
