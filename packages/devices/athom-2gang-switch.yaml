@@ -1,0 +1,256 @@
+packages:
+  - !include ../common.yaml
+  - !include ../common-esp32.yaml
+
+esphome:
+  platformio_options:
+    board_build.mcu: esp32c3
+    board_build.variant: esp32c3
+    board_build.flash_mode: dio
+
+esp32:
+  board: esp32-c3-devkitm-1
+  flash_size: 4MB
+  variant: ESP32C3
+  framework:
+    type: esp-idf
+
+globals:
+  - id: decoupled_mode1
+    type: bool
+    restore_value: yes
+    initial_value: "false"
+
+  - id: decoupled_mode2
+    type: bool
+    restore_value: yes
+    initial_value: "false"
+
+status_led:
+  pin:
+    # This is a second bright blue LED at Button 1.
+    number: GPIO9
+    inverted: true
+    ignore_strapping_warning: true
+    id: status_led_blue
+
+output:
+  - platform: ledc
+    # Whet this is high, dim red LED is lit.
+    # When this is low, first bright blue LED is lit.
+    pin: GPIO3
+    inverted: true
+    id: output_red_blue_led_button1
+
+  - platform: ledc
+    # Whet this is high, dim red LED is lit.
+    # When this is low, first bright blue LED is lit.
+    pin: GPIO21
+    inverted: true
+    id: output_red_blue_led_button2
+
+  - platform: template
+    id: output_template_light1
+    type: binary
+    write_action:
+      - if:
+          condition:
+            lambda: "return state;"
+          then:
+            - switch.turn_on: switch_relay1
+          else:
+            - if:
+                condition:
+                  lambda: "return id(decoupled_mode1);"
+                then:
+                  - light.turn_on: light1
+                else:
+                  - switch.turn_off: switch_relay1
+
+  - platform: template
+    id: output_template_light2
+    type: binary
+    write_action:
+      - if:
+          condition:
+            lambda: "return state;"
+          then:
+            - switch.turn_on: switch_relay2
+          else:
+            - if:
+                condition:
+                  lambda: "return id(decoupled_mode2);"
+                then:
+                  - light.turn_on: light2
+                else:
+                  - switch.turn_off: switch_relay2
+
+switch:
+  - platform: gpio
+    pin: GPIO5
+    id: switch_relay1
+    internal: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_on:
+      - output.turn_on: output_red_blue_led_button1
+      - light.turn_on: light1
+    on_turn_off:
+      - output.turn_off: output_red_blue_led_button1
+      - light.turn_off: light1
+
+  - platform: gpio
+    pin: GPIO18
+    id: switch_relay2
+    internal: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_on:
+      - output.turn_on: output_red_blue_led_button2
+      - light.turn_on: light2
+    on_turn_off:
+      - output.turn_off: output_red_blue_led_button2
+      - light.turn_off: light2
+
+  - platform: template
+    name: "Decoupled Mode 1"
+    icon: "mdi:link-variant-off"
+    entity_category: config
+    lambda: |-
+      return id(decoupled_mode1);
+    turn_on_action:
+      - globals.set:
+          id: decoupled_mode1
+          value: "true"
+      - switch.turn_on: switch_relay1
+    turn_off_action:
+      - globals.set:
+          id: decoupled_mode1
+          value: "false"
+
+  - platform: template
+    name: "Decoupled Mode 2"
+    icon: "mdi:link-variant-off"
+    entity_category: config
+    lambda: |-
+      return id(decoupled_mode2);
+    turn_on_action:
+      - globals.set:
+          id: decoupled_mode2
+          value: "true"
+      - switch.turn_on: switch_relay2
+    turn_off_action:
+      - globals.set:
+          id: decoupled_mode2
+          value: "false"
+
+light:
+  - platform: binary
+    name: "Light 1"
+    id: light1
+    output: output_template_light1
+
+  - platform: binary
+    name: "Light 2"
+    id: light2
+    output: output_template_light2
+
+event:
+  - platform: template
+    name: "Button 1"
+    id: event_button1
+    event_types:
+      - "Pressed once"
+      - "Pressed twice"
+      - "Held down"
+
+  - platform: template
+    name: "Button 2"
+    id: event_button2
+    event_types:
+      - "Pressed once"
+      - "Pressed twice"
+      - "Held down"
+
+binary_sensor:
+  - platform: gpio
+    id: binary_sensor_button1
+    internal: true
+    pin:
+      inverted: true
+      number: GPIO20
+      mode:
+        input: true
+        pullup: true
+    on_multi_click:
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at least 0.25s
+        then:
+          - event.trigger:
+              id: event_button1
+              event_type: "Pressed once"
+          - if:
+              condition:
+                lambda: "return !id(decoupled_mode1);"
+              then:
+                - switch.toggle: switch_relay1
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at most 0.25s
+          - ON for at most 0.5s
+          - OFF for at least 0.25s
+        then:
+          - event.trigger:
+              id: event_button1
+              event_type: "Pressed twice"
+      - timing:
+          - ON for at least 1s
+        then:
+          - event.trigger:
+              id: event_button1
+              event_type: "Held down"
+      - timing:
+          - ON for at least 15s
+        then:
+          - button.press: button_factory_reset
+
+  - platform: gpio
+    id: binary_sensor_button2
+    internal: true
+    pin:
+      inverted: true
+      number: GPIO19
+      mode:
+        input: true
+        pullup: true
+    on_multi_click:
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at least 0.25s
+        then:
+          - event.trigger:
+              id: event_button2
+              event_type: "Pressed once"
+          - if:
+              condition:
+                lambda: "return !id(decoupled_mode2);"
+              then:
+                - switch.toggle: switch_relay2
+      - timing:
+          - ON for at most 0.5s
+          - OFF for at most 0.25s
+          - ON for at most 0.5s
+          - OFF for at least 0.25s
+        then:
+          - event.trigger:
+              id: event_button2
+              event_type: "Pressed twice"
+      - timing:
+          - ON for at least 1s
+        then:
+          - event.trigger:
+              id: event_button2
+              event_type: "Held down"
+      - timing:
+          - ON for at least 15s
+        then:
+          - button.press: button_factory_reset
