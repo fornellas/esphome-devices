@@ -7,6 +7,19 @@ esphome:
     board_build.mcu: esp32c3
     board_build.variant: esp32c3
     board_build.flash_mode: dio
+  on_boot:
+    priority: 600.0
+    then:
+      - if:
+          condition:
+            switch.is_on: switch_decoupled_mode1
+          then:
+            - switch.turn_on: switch_relay1
+      - if:
+          condition:
+            switch.is_on: switch_decoupled_mode2
+          then:
+            - switch.turn_on: switch_relay2
 
 esp32:
   board: esp32-c3-devkitm-1
@@ -14,17 +27,6 @@ esp32:
   variant: ESP32C3
   framework:
     type: esp-idf
-
-globals:
-  - id: decoupled_mode1
-    type: bool
-    restore_value: yes
-    initial_value: "false"
-
-  - id: decoupled_mode2
-    type: bool
-    restore_value: yes
-    initial_value: "false"
 
 status_led:
   pin:
@@ -61,7 +63,7 @@ output:
           else:
             - if:
                 condition:
-                  lambda: "return id(decoupled_mode1);"
+                  switch.is_on: switch_decoupled_mode1
                 then:
                   - light.turn_on: light1
                 else:
@@ -79,7 +81,7 @@ output:
           else:
             - if:
                 condition:
-                  lambda: "return id(decoupled_mode2);"
+                  switch.is_on: switch_decoupled_mode2
                 then:
                   - light.turn_on: light2
                 else:
@@ -112,35 +114,23 @@ switch:
 
   - platform: template
     name: "Decoupled Mode 1"
+    id: switch_decoupled_mode1
     icon: "mdi:link-variant-off"
     entity_category: config
-    lambda: |-
-      return id(decoupled_mode1);
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
     turn_on_action:
-      - globals.set:
-          id: decoupled_mode1
-          value: "true"
       - switch.turn_on: switch_relay1
-    turn_off_action:
-      - globals.set:
-          id: decoupled_mode1
-          value: "false"
 
   - platform: template
     name: "Decoupled Mode 2"
+    id: switch_decoupled_mode2
     icon: "mdi:link-variant-off"
     entity_category: config
-    lambda: |-
-      return id(decoupled_mode2);
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
     turn_on_action:
-      - globals.set:
-          id: decoupled_mode2
-          value: "true"
       - switch.turn_on: switch_relay2
-    turn_off_action:
-      - globals.set:
-          id: decoupled_mode2
-          value: "false"
 
 light:
   - platform: binary
@@ -190,7 +180,7 @@ binary_sensor:
               event_type: "Pressed once"
           - if:
               condition:
-                lambda: "return !id(decoupled_mode1);"
+                switch.is_off: switch_decoupled_mode1
               then:
                 - switch.toggle: switch_relay1
       - timing:
@@ -232,7 +222,7 @@ binary_sensor:
               event_type: "Pressed once"
           - if:
               condition:
-                lambda: "return !id(decoupled_mode2);"
+                switch.is_off: switch_decoupled_mode2
               then:
                 - switch.toggle: switch_relay2
       - timing:
