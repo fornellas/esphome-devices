@@ -46,7 +46,7 @@ output:
     id: output_red_blue_led
 
   - platform: template
-    id: light_template_output
+    id: output_template_light
     type: binary
     write_action:
       - if:
@@ -96,7 +96,7 @@ light:
   - platform: binary
     name: "Light"
     id: light1
-    output: light_template_output
+    output: output_template_light
 
 event:
   - platform: template
