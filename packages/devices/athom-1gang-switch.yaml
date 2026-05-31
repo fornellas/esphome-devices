@@ -12,9 +12,9 @@ esphome:
     then:
       - if:
           condition:
-            lambda: "return id(decoupled_mode);"
+            switch.is_on: switch_decoupled_mode1
           then:
-            - switch.turn_on: switch_relay
+            - switch.turn_on: switch_relay1
 
 esp32:
   board: esp32-c3-devkitm-1
@@ -22,12 +22,6 @@ esp32:
   variant: ESP32C3
   framework:
     type: esp-idf
-
-globals:
-  - id: decoupled_mode
-    type: bool
-    restore_value: yes
-    initial_value: "false"
 
 status_led:
   pin:
@@ -43,65 +37,59 @@ output:
     # When this is low, first bright blue LED is lit.
     pin: GPIO3
     inverted: true
-    id: output_red_blue_led
+    id: output_red_blue_led_button1
 
   - platform: template
-    id: output_template_light
+    id: output_template_light1
     type: binary
     write_action:
       - if:
           condition:
             lambda: "return state;"
           then:
-            - switch.turn_on: switch_relay
+            - switch.turn_on: switch_relay1
           else:
             - if:
                 condition:
-                  lambda: "return id(decoupled_mode);"
+                  switch.is_on: switch_decoupled_mode1
                 then:
                   - light.turn_on: light1
                 else:
-                  - switch.turn_off: switch_relay
+                  - switch.turn_off: switch_relay1
 
 switch:
   - platform: gpio
     pin: GPIO5
-    id: switch_relay
+    id: switch_relay1
     internal: true
     restore_mode: RESTORE_DEFAULT_OFF
     on_turn_on:
-      - output.turn_on: output_red_blue_led
+      - output.turn_on: output_red_blue_led_button1
       - light.turn_on: light1
     on_turn_off:
-      - output.turn_off: output_red_blue_led
+      - output.turn_off: output_red_blue_led_button1
       - light.turn_off: light1
 
   - platform: template
     name: "Decoupled Mode"
+    id: switch_decoupled_mode1
     icon: "mdi:link-variant-off"
     entity_category: config
-    lambda: |-
-      return id(decoupled_mode);
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
     turn_on_action:
-      - globals.set:
-          id: decoupled_mode
-          value: "true"
-      - switch.turn_on: switch_relay
-    turn_off_action:
-      - globals.set:
-          id: decoupled_mode
-          value: "false"
+      - switch.turn_on: switch_relay1
 
 light:
   - platform: binary
     name: "Light"
     id: light1
-    output: output_template_light
+    output: output_template_light1
 
 event:
   - platform: template
     name: "Button"
-    id: event_button
+    id: event_button1
     event_types:
       - "Pressed once"
       - "Pressed twice"
@@ -109,7 +97,7 @@ event:
 
 binary_sensor:
   - platform: gpio
-    id: binary_sensor_button
+    id: binary_sensor_button1
     internal: true
     pin:
       inverted: true
@@ -123,13 +111,13 @@ binary_sensor:
           - OFF for at least 0.25s
         then:
           - event.trigger:
-              id: event_button
+              id: event_button1
               event_type: "Pressed once"
           - if:
               condition:
-                lambda: "return !id(decoupled_mode);"
+                switch.is_off: switch_decoupled_mode1
               then:
-                - switch.toggle: switch_relay
+                - switch.toggle: switch_relay1
       - timing:
           - ON for at most 0.5s
           - OFF for at most 0.25s
@@ -137,13 +125,13 @@ binary_sensor:
           - OFF for at least 0.25s
         then:
           - event.trigger:
-              id: event_button
+              id: event_button1
               event_type: "Pressed twice"
       - timing:
           - ON for at least 1s
         then:
           - event.trigger:
-              id: event_button
+              id: event_button1
               event_type: "Held down"
       - timing:
           - ON for at least 15s
