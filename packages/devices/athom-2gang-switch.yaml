@@ -37,14 +37,14 @@ status_led:
     id: status_led_blue
 
 output:
-  - platform: ledc
+  - platform: gpio
     # Whet this is high, dim red LED is lit.
     # When this is low, first bright blue LED is lit.
     pin: GPIO3
     inverted: true
     id: output_red_blue_led_button1
 
-  - platform: ledc
+  - platform: gpio
     # Whet this is high, dim red LED is lit.
     # When this is low, first bright blue LED is lit.
     pin: GPIO21
