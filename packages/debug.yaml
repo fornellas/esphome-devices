@@ -8,8 +8,6 @@ sensor:
       name: "Debug: Heap Max Block"
     loop_time:
       name: "Debug: Loop Time"
-    # psram:
-    #   name: "Debug: Free PSRAM"
     cpu_frequency:
       name: "Debug: CPU Frequency"
 

@@ -4,3 +4,6 @@ sensor:
       name: "Debug: Heap Min Free"
     fragmentation:
       name: "Debug: Heap Fragmentation"
+    # TODO This option requires component psram.
+    # psram:
+    #   name: "Debug: Free PSRAM"
