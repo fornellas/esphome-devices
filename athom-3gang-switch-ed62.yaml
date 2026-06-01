@@ -1,0 +1,8 @@
+substitutions:
+  ota_password: !secret athom-3gang-switch-ed62_ota_password
+  api_encryption_key: !secret athom-3gang-switch-ed62_api_encryption_key
+packages:
+  - !include packages/devices/athom-3gang-switch.yaml
+esphome:
+  name: athom-3gang-switch-ed62
+  friendly_name: "Athom 3 Gang Switch ed62"
