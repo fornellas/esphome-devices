@@ -1,0 +1,8 @@
+substitutions:
+  ota_password: !secret athom-1gang-switch-a462_ota_password
+  api_encryption_key: !secret athom-1gang-switch-a462_api_encryption_key
+packages:
+  - !include packages/devices/athom-1gang-switch.yaml
+esphome:
+  name: athom-1gang-switch-a462
+  friendly_name: "Athom 1 Gang Switch a462"
