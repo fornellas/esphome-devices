@@ -56,7 +56,7 @@ binary_sensor:
         then:
           - switch.toggle: power_switch
       - timing:
-          - ON for at least 4s
+          - ON for at least 15s
         then:
           - button.press: button_factory_reset
 
