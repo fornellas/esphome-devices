@@ -46,5 +46,6 @@ api:
 ota:
   - platform: esphome
     password: ${ota_password}
+    id: ota_esphome
 
 captive_portal:
