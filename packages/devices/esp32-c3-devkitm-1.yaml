@@ -1,0 +1,12 @@
+packages:
+  - !include ../common.yaml
+  - !include ../common-esp32.yaml
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
+logger:
+  hardware_uart: UART0
+  baud_rate: 115200
