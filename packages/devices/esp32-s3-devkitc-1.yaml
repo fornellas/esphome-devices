@@ -1,9 +1,7 @@
 packages:
   - !include ../common.yaml
   - !include ../common-esp32.yaml
-esphome:
-  name: esp32-s3-devkitc-1
-  friendly_name: ESP32-S3 DevKitc-1
+
 esp32:
   board: esp32-s3-devkitc-1
   framework:
