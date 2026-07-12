@@ -1,14 +1,60 @@
+external_components:
+  - source:
+      type: git
+      url: https://github.com/fornellas/esphome
+      ref: improve_sonoff_pow_ring
+    components: [ cse7761 ]
+    refresh: 0s
+
+substitutions:
+  cse7761_voltage_internal: false
+  cse7761_current_1_internal: false
+  cse7761_current_2_internal: false
+  cse7761_active_power_1_internal: false
+  cse7761_active_power_2_internal: false
+  cse7761_energy_1_internal: false
+  cse7761_energy_2_internal: false
+  cse7761_frequency_internal: false
+  cse7761_power_factor_internal: false
+
 sensor:
   - platform: cse7761
+    id: cse7761_sensor
     voltage:
       name: "CSE7761: Voltage"
+      id: cse7761_voltage_sensor
+      internal: ${cse7761_voltage_internal}
     current_1:
       name: "CSE7761: Current 1"
+      id: cse7761_current_1_sensor
+      internal: ${cse7761_current_1_internal}
     current_2:
       name: "CSE7761: Current 2"
+      id: cse7761_current_2_sensor
+      internal: ${cse7761_current_2_internal}
     active_power_1:
       name: "CSE7761: Active Power 1"
+      id: cse7761_active_power_1_sensor
+      internal: ${cse7761_active_power_1_internal}
     active_power_2:
       name: "CSE7761: Active Power 2"
+      id: cse7761_active_power_2_sensor
+      internal: ${cse7761_active_power_2_internal}
+    energy_1:
+      name: "CSE7761: Energy 1"
+      id: cse7761_energy_1_sensor
+      internal: ${cse7761_energy_1_internal}
+    energy_2:
+      name: "CSE7761: Energy 2"
+      id: cse7761_energy_2_sensor
+      internal: ${cse7761_energy_2_internal}
+    frequency:
+      name: "CSE7761: Frequency"
+      id: cse7761_frequency_sensor
+      internal: ${cse7761_frequency_internal}
+    power_factor:
+      name: "CSE7761: Power Factor"
+      id: cse7761_power_factor_sensor
+      internal: ${cse7761_power_factor_internal}
     update_interval: 1s
     uart_id: cse7761_uart
