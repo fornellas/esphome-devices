@@ -1,0 +1,38 @@
+substitutions:
+  wifi_status_led_pin_inverted: false
+  wifi_status_led_pin_ignore_strapping_warning: false
+
+esphome:
+  on_boot:
+    - priority: 600.0
+      then:
+        - lambda: |-
+            // Default: Connecting (slow blink)
+            id(wifi_status_led).set_level(0.5);
+            id(wifi_status_led).set_period(1000);
+            id(wifi_status_led).turn_on();
+  on_loop:
+    then:
+      - lambda: |-
+          // Captive portal (fast blink)
+          if(id(wifi_component).has_ap() && !id(wifi_component).has_sta()) {
+            id(wifi_status_led).set_level(0.5);
+            id(wifi_status_led).set_period(200);
+          } else {
+            id(wifi_status_led).set_period(1000);
+            // Connected (solid)
+            if(id(wifi_component).is_connected())
+              id(wifi_status_led).set_level(1);
+            // Connecting (slow blink)
+            else
+              id(wifi_status_led).set_level(0.5);
+          }
+
+output:
+  - platform: slow_pwm
+    id: wifi_status_led
+    period: 1s
+    pin:
+      number: ${wifi_status_led_pin_number}
+      inverted: ${wifi_status_led_pin_inverted}
+      ignore_strapping_warning: ${wifi_status_led_pin_ignore_strapping_warning}
