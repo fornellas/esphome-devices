@@ -163,6 +163,6 @@ display:
     } else {
       it.display_voltage(false);
       it.display_kwh(true);
-      // it.printf(0, "%.1f", id(cse7761_energy_1_sensor).state / 1000.0);
+      it.printf(0, "%.3f", id(cse7761_energy_1_sensor).state / 1000.0);
       it.printf(1, "%.1f", id(cse7761_active_power_1_sensor).state);
     }
