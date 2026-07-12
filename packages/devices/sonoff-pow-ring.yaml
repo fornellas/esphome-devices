@@ -1,15 +1,46 @@
+substitutions:
+  wifi_status_led_pin_number: GPIO15
+  wifi_status_led_pin_inverted: true
+  wifi_status_led_pin_ignore_strapping_warning: true
+  cse7761_current_2_internal: true
+  cse7761_active_power_2_internal: true
+  cse7761_energy_2_internal: true
+
 packages:
   - !include ../common.yaml
   - !include ../common-esp32.yaml
+  - !include ../wifi-status-led.yaml
   - !include ../sensors/cse7761.yaml
+
+esphome:
+  on_boot:
+    priority: -100.0
+    then:
+      - if:
+          condition:
+            lambda: 'return id(relay_restore_mode).current_option() == "Always On";'
+          then:
+            - switch.turn_on: relay_switch
+      - if:
+          condition:
+            lambda: 'return id(relay_restore_mode).current_option() == "Restore Last State";'
+          then:
+            - if:
+                condition:
+                  lambda: 'return id(relay_saved_state);'
+                then:
+                  - switch.turn_on: relay_switch
 
 esp32:
   variant: esp32
   framework:
     type: esp-idf
 
-logger:
-  baud_rate: 115200
+globals:
+  - id: relay_saved_state
+    type: bool
+    restore_value: yes
+    initial_value: 'false'
 
 uart:
   tx_pin: GPIO26
@@ -18,15 +49,120 @@ uart:
   parity: EVEN
   stop_bits: 1
   id: cse7761_uart
-# GPIO00	Push Button (HIGH = off, LOW = on)
 
-# GPIO05	TM1621 DA
-# GPIO17	TM1621 CS
-# GPIO18	TM1621 WR
-# GPIO23	TM1621 RD
+sensor:
+  - id: !extend cse7761_sensor
+    voltage:
+      name: "Voltage"
+    current_1:
+      name: "Current"
+      filters:
+          - lambda: return x / M_PI;
+    active_power_1:
+      name: "Power"
+      filters:
+        - lambda: return x / M_PI;
+    energy_1:
+      name: "Energy"
+      filters:
+        - lambda: return x / M_PI;
+    frequency:
+      name: "Frequency"
+    power_factor:
+      name: "Power Factor"
 
-# GPIO13	Status LED (HIGH = off, LOW = on)
+binary_sensor:
+  - platform: template
+    id: page
+    trigger_on_initial_state: true
+    internal: true
 
-# GPIO15	Wifi_LED
+  - platform: gpio
+    id: device_button
+    pin:
+      number: GPIO00
+      ignore_strapping_warning: true
+    internal: true
+    filters:
+      - invert:
+      - delayed_off: 10ms
+    on_click:
+      - max_length: 350ms
+        then:
+          - switch.toggle: relay_switch
+      - min_length: 360ms
+        max_length: 3s
+        then:
+          - if:
+              condition:
+                binary_sensor.is_on: page
+              then:
+                binary_sensor.template.publish:
+                  id: page
+                  state: OFF
+              else:
+                binary_sensor.template.publish:
+                  id: page
+                  state: ON
+    on_multi_click:
+      - timing:
+          - ON for at least 15s
+        then:
+          - button.press: button_factory_reset
 
-# GPIO21	Relay1
+status_led:
+  pin:
+    number: GPIO13
+    inverted: true
+
+select:
+  - platform: template
+    name: "Relay Restore Mode"
+    id: relay_restore_mode
+    optimistic: true
+    restore_value: true
+    options:
+      - "Always Off"
+      - "Always On"
+      - "Restore Last State"
+    initial_option: "Always Off"
+
+switch:
+  - platform: gpio
+    id: relay_switch
+    pin: GPIO21
+    name: "Relay"
+    icon: mdi:toggle-switch
+    entity_category: ""
+    device_class: outlet
+    restore_mode: ALWAYS_OFF
+    on_turn_on:
+      - globals.set:
+          id: relay_saved_state
+          value: 'true'
+    on_turn_off:
+      - globals.set:
+          id: relay_saved_state
+          value: 'false'
+
+display:
+  platform: tm1621
+  id: tm1621_display
+  cs_pin: GPIO17
+  data_pin:
+    number: GPIO05
+    ignore_strapping_warning: true
+  read_pin: GPIO23
+  write_pin: GPIO18
+  lambda: |-
+    if (id(page).state) {
+      it.display_voltage(true);
+      it.display_kwh(false);
+      it.printf(0, "%.1f", id(cse7761_voltage_sensor).state);
+      it.printf(1, "%.1f", id(cse7761_current_1_sensor).state);
+    } else {
+      it.display_voltage(false);
+      it.display_kwh(true);
+      // it.printf(0, "%.1f", id(cse7761_energy_1_sensor).state);
+      it.printf(1, "%.1f", id(cse7761_active_power_1_sensor).state);
+    }
