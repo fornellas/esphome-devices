@@ -1,3 +1,8 @@
+substitutions:
+  # Set to "-1" for devices mounted upside down, to invert the X axis and angle
+  # of targets, and the X coordinates of zones.
+  ld2450_x_multiplier: "1"
+
 ld2450:
   id: ld2450_radar
   uart_id: uart_ld2450
@@ -26,12 +31,24 @@ sensor:
     target_1:
       x:
         name: "LD2450: Target-1: X"
+        filters:
+          - timeout:
+              timeout: 1000ms
+              value: last
+          - throttle_with_priority: 1000ms
+          - lambda: return x * ${ld2450_x_multiplier};
       y:
         name: "LD2450: Target-1: Y"
       speed:
         name: "LD2450: Target-1: Speed"
       angle:
         name: "LD2450: Target-1: Angle"
+        filters:
+          - timeout:
+              timeout: 1000ms
+              value: last
+          - throttle_with_priority: 1000ms
+          - lambda: return x * ${ld2450_x_multiplier};
       distance:
         name: "LD2450: Target-1: Distance"
       resolution:
@@ -39,12 +56,24 @@ sensor:
     target_2:
       x:
         name: "LD2450: Target-2: X"
+        filters:
+          - timeout:
+              timeout: 1000ms
+              value: last
+          - throttle_with_priority: 1000ms
+          - lambda: return x * ${ld2450_x_multiplier};
       y:
         name: "LD2450: Target-2: Y"
       speed:
         name: "LD2450: Target-2: Speed"
       angle:
         name: "LD2450: Target-2: Angle"
+        filters:
+          - timeout:
+              timeout: 1000ms
+              value: last
+          - throttle_with_priority: 1000ms
+          - lambda: return x * ${ld2450_x_multiplier};
       distance:
         name: "LD2450: Target-2: Distance"
       resolution:
@@ -52,12 +81,24 @@ sensor:
     target_3:
       x:
         name: "LD2450: Target-3: X"
+        filters:
+          - timeout:
+              timeout: 1000ms
+              value: last
+          - throttle_with_priority: 1000ms
+          - lambda: return x * ${ld2450_x_multiplier};
       y:
         name: "LD2450: Target-3: Y"
       speed:
         name: "LD2450: Target-3: Speed"
       angle:
         name: "LD2450: Target-3: Angle"
+        filters:
+          - timeout:
+              timeout: 1000ms
+              value: last
+          - throttle_with_priority: 1000ms
+          - lambda: return x * ${ld2450_x_multiplier};
       distance:
         name: "LD2450: Target-3: Distance"
       resolution:
@@ -99,31 +140,140 @@ number:
       name: "LD2450: Presence Timeout"
     zone_1:
       x1:
-        name: "LD2450: Zone-1: X1"
+        id: ld2450_zone_1_x1
+        internal: true
       y1:
         name: "LD2450: Zone-1: Y1"
       x2:
-        name: "LD2450: Zone-1: X2"
+        id: ld2450_zone_1_x2
+        internal: true
       y2:
         name: "LD2450: Zone-1: Y2"
     zone_2:
       x1:
-        name: "LD2450: Zone-2: X1"
+        id: ld2450_zone_2_x1
+        internal: true
       y1:
         name: "LD2450: Zone-2: Y1"
       x2:
-        name: "LD2450: Zone-2: X2"
+        id: ld2450_zone_2_x2
+        internal: true
       y2:
         name: "LD2450: Zone-2: Y2"
     zone_3:
       x1:
-        name: "LD2450: Zone-3: X1"
+        id: ld2450_zone_3_x1
+        internal: true
       y1:
         name: "LD2450: Zone-3: Y1"
       x2:
-        name: "LD2450: Zone-3: X2"
+        id: ld2450_zone_3_x2
+        internal: true
       y2:
         name: "LD2450: Zone-3: Y2"
+
+  # The ld2450 platform's zone X1/X2 numbers above are marked internal, and
+  # mirrored here through template numbers that apply ld2450_x_multiplier, so
+  # zones can be configured using real-world coordinates regardless of how the
+  # sensor is physically mounted. min_value/max_value/step/device_class/
+  # unit_of_measurement/entity_category/icon mirror the ld2450 component's own
+  # ZoneCoordinateNumber config (esphome/components/ld2450/number/__init__.py).
+  - platform: template
+    id: ld2450_zone_1_x1_template
+    name: "LD2450: Zone-1: X1"
+    device_class: distance
+    unit_of_measurement: "mm"
+    entity_category: config
+    icon: "mdi:arrow-top-left-bold-box-outline"
+    min_value: -4860
+    max_value: 4860
+    step: 1
+    update_interval: 1s
+    lambda: return id(ld2450_zone_1_x1).state * ${ld2450_x_multiplier};
+    set_action:
+      - number.set:
+          id: ld2450_zone_1_x1
+          value: !lambda return x * ${ld2450_x_multiplier};
+  - platform: template
+    id: ld2450_zone_1_x2_template
+    name: "LD2450: Zone-1: X2"
+    device_class: distance
+    unit_of_measurement: "mm"
+    entity_category: config
+    icon: "mdi:arrow-bottom-right-bold-box-outline"
+    min_value: -4860
+    max_value: 4860
+    step: 1
+    update_interval: 1s
+    lambda: return id(ld2450_zone_1_x2).state * ${ld2450_x_multiplier};
+    set_action:
+      - number.set:
+          id: ld2450_zone_1_x2
+          value: !lambda return x * ${ld2450_x_multiplier};
+  - platform: template
+    id: ld2450_zone_2_x1_template
+    name: "LD2450: Zone-2: X1"
+    device_class: distance
+    unit_of_measurement: "mm"
+    entity_category: config
+    icon: "mdi:arrow-top-left-bold-box-outline"
+    min_value: -4860
+    max_value: 4860
+    step: 1
+    update_interval: 1s
+    lambda: return id(ld2450_zone_2_x1).state * ${ld2450_x_multiplier};
+    set_action:
+      - number.set:
+          id: ld2450_zone_2_x1
+          value: !lambda return x * ${ld2450_x_multiplier};
+  - platform: template
+    id: ld2450_zone_2_x2_template
+    name: "LD2450: Zone-2: X2"
+    device_class: distance
+    unit_of_measurement: "mm"
+    entity_category: config
+    icon: "mdi:arrow-bottom-right-bold-box-outline"
+    min_value: -4860
+    max_value: 4860
+    step: 1
+    update_interval: 1s
+    lambda: return id(ld2450_zone_2_x2).state * ${ld2450_x_multiplier};
+    set_action:
+      - number.set:
+          id: ld2450_zone_2_x2
+          value: !lambda return x * ${ld2450_x_multiplier};
+  - platform: template
+    id: ld2450_zone_3_x1_template
+    name: "LD2450: Zone-3: X1"
+    device_class: distance
+    unit_of_measurement: "mm"
+    entity_category: config
+    icon: "mdi:arrow-top-left-bold-box-outline"
+    min_value: -4860
+    max_value: 4860
+    step: 1
+    update_interval: 1s
+    lambda: return id(ld2450_zone_3_x1).state * ${ld2450_x_multiplier};
+    set_action:
+      - number.set:
+          id: ld2450_zone_3_x1
+          value: !lambda return x * ${ld2450_x_multiplier};
+  - platform: template
+    id: ld2450_zone_3_x2_template
+    name: "LD2450: Zone-3: X2"
+    device_class: distance
+    unit_of_measurement: "mm"
+    entity_category: config
+    icon: "mdi:arrow-bottom-right-bold-box-outline"
+    min_value: -4860
+    max_value: 4860
+    step: 1
+    update_interval: 1s
+    lambda: return id(ld2450_zone_3_x2).state * ${ld2450_x_multiplier};
+    set_action:
+      - number.set:
+          id: ld2450_zone_3_x2
+          value: !lambda return x * ${ld2450_x_multiplier};
 
 button:
   - platform: ld2450
