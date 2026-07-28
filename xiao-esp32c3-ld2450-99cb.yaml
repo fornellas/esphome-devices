@@ -1,0 +1,10 @@
+substitutions:
+  ota_password: !secret xiao-esp32c3-ld2450-99cb_ota_password
+  api_encryption_key: !secret xiao-esp32c3-ld2450-99cb_api_encryption_key
+
+packages:
+  - !include packages/devices/xiao-esp32c3-ld2450.yaml
+
+esphome:
+  name: xiao-esp32c3-ld2450-99cb
+  friendly_name: "XIAO ESP32C3 LD2450 99cb"

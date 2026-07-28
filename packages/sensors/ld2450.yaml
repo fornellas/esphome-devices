@@ -1,0 +1,159 @@
+ld2450:
+  id: ld2450_radar
+  uart_id: uart_ld2450
+
+# TODO default sensors have filter with value: last: this should be value: NaN to avoid giving stale data on failures.
+binary_sensor:
+  - platform: ld2450
+    ld2450_id: ld2450_radar
+    has_target:
+      name: "LD2450: Has Target"
+    has_moving_target:
+      name: "LD2450: Has Moving Target"
+    has_still_target:
+      name: "LD2450: Has Still Target"
+
+# TODO default sensors have filter with value: last: this should be value: NaN to avoid giving stale data on failures.
+sensor:
+  - platform: ld2450
+    ld2450_id: ld2450_radar
+    target_count:
+      name: "LD2450: Target Count"
+    still_target_count:
+      name: "LD2450: Still Target Count"
+    moving_target_count:
+      name: "LD2450: Moving Target Count"
+    target_1:
+      x:
+        name: "LD2450: Target-1: X"
+      y:
+        name: "LD2450: Target-1: Y"
+      speed:
+        name: "LD2450: Target-1: Speed"
+      angle:
+        name: "LD2450: Target-1: Angle"
+      distance:
+        name: "LD2450: Target-1: Distance"
+      resolution:
+        name: "LD2450: Target-1: Resolution"
+    target_2:
+      x:
+        name: "LD2450: Target-2: X"
+      y:
+        name: "LD2450: Target-2: Y"
+      speed:
+        name: "LD2450: Target-2: Speed"
+      angle:
+        name: "LD2450: Target-2: Angle"
+      distance:
+        name: "LD2450: Target-2: Distance"
+      resolution:
+        name: "LD2450: Target-2: Resolution"
+    target_3:
+      x:
+        name: "LD2450: Target-3: X"
+      y:
+        name: "LD2450: Target-3: Y"
+      speed:
+        name: "LD2450: Target-3: Speed"
+      angle:
+        name: "LD2450: Target-3: Angle"
+      distance:
+        name: "LD2450: Target-3: Distance"
+      resolution:
+        name: "LD2450: Target-3: Resolution"
+    zone_1:
+      target_count:
+        name: "LD2450: Zone-1: Target Count"
+      still_target_count:
+        name: "LD2450: Zone-1: Still Target Count"
+      moving_target_count:
+        name: "LD2450: Zone-1: Moving Target Count"
+    zone_2:
+      target_count:
+        name: "LD2450: Zone-2: Target Count"
+      still_target_count:
+        name: "LD2450: Zone-2: Still Target Count"
+      moving_target_count:
+        name: "LD2450: Zone-2: Moving Target Count"
+    zone_3:
+      target_count:
+        name: "LD2450: Zone-3: Target Count"
+      still_target_count:
+        name: "LD2450: Zone-3: Still Target Count"
+      moving_target_count:
+        name: "LD2450: Zone-3: Moving Target Count"
+
+switch:
+  - platform: ld2450
+    ld2450_id: ld2450_radar
+    bluetooth:
+      name: "LD2450: Bluetooth"
+    multi_target:
+      name: "LD2450: Multi Target"
+
+number:
+  - platform: ld2450
+    ld2450_id: ld2450_radar
+    presence_timeout:
+      name: "LD2450: Presence Timeout"
+    zone_1:
+      x1:
+        name: "LD2450: Zone-1: X1"
+      y1:
+        name: "LD2450: Zone-1: Y1"
+      x2:
+        name: "LD2450: Zone-1: X2"
+      y2:
+        name: "LD2450: Zone-1: Y2"
+    zone_2:
+      x1:
+        name: "LD2450: Zone-2: X1"
+      y1:
+        name: "LD2450: Zone-2: Y1"
+      x2:
+        name: "LD2450: Zone-2: X2"
+      y2:
+        name: "LD2450: Zone-2: Y2"
+    zone_3:
+      x1:
+        name: "LD2450: Zone-3: X1"
+      y1:
+        name: "LD2450: Zone-3: Y1"
+      x2:
+        name: "LD2450: Zone-3: X2"
+      y2:
+        name: "LD2450: Zone-3: Y2"
+
+button:
+  - platform: ld2450
+    ld2450_id: ld2450_radar
+    factory_reset:
+      name: "LD2450: Factory Reset"
+    restart:
+      name: "LD2450: Restart"
+
+text_sensor:
+  - platform: ld2450
+    ld2450_id: ld2450_radar
+    version:
+      name: "LD2450: Version"
+    mac_address:
+      name: "LD2450: MAC Address"
+    target_1:
+      direction:
+        name: "LD2450: Target-1: Direction"
+    target_2:
+      direction:
+        name: "LD2450: Target-2: Direction"
+    target_3:
+      direction:
+        name: "LD2450: Target-3: Direction"
+
+select:
+  - platform: ld2450
+    ld2450_id: ld2450_radar
+    baud_rate:
+      name: "LD2450: Baud rate"
+    zone_type:
+      name: "LD2450: Zone type"
