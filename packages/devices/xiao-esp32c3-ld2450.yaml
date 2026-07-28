@@ -1,3 +1,7 @@
+substitutions:
+  # This device is mounted upside down.
+  ld2450_x_multiplier: "-1"
+
 packages:
   - !include ../common.yaml
   - !include ../common-esp32.yaml
