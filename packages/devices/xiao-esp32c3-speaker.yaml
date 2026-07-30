@@ -1,0 +1,48 @@
+packages:
+  - !include ../common.yaml
+  - !include ../common-esp32.yaml
+
+esp32:
+  board: seeed_xiao_esp32c3
+  variant: esp32c3
+
+i2s_audio:
+  i2s_lrclk_pin: GPIO20 # LRC
+  i2s_bclk_pin: GPIO07 # BCLK
+  id: i2s_audio_esp32
+
+speaker:
+  - platform: i2s_audio
+    id: speaker_i2s_audio
+    dac_type: external
+    i2s_dout_pin: GPIO21 # DIN
+    channel: mono
+    sample_rate: 48000
+    i2s_audio_id: i2s_audio_esp32
+    buffer_duration: 50ms
+
+  - platform: resampler
+    id: speaker_announcement_resampler
+    output_speaker: speaker_i2s_audio
+    sample_rate: 48000
+    bits_per_sample: 16
+    buffer_duration: 50ms
+
+media_player:
+  - platform: speaker
+    name: "Speaker Media Player"
+    id: media_player_speaker
+    announcement_pipeline:
+        speaker: speaker_i2s_audio
+    files:
+      - id: bird_flac
+        file: bird.flac
+    buffer_size: 4000
+
+button:
+  - platform: template
+    name: "Play Test Sound"
+    on_press:
+      - media_player.speaker.play_on_device_media_file:
+          id: media_player_speaker
+          media_file: bird_flac
