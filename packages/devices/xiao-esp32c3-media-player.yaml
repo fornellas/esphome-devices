@@ -30,7 +30,7 @@ speaker:
 
 media_player:
   - platform: speaker
-    name: "Speaker Media Player"
+    name: "Media Player"
     id: media_player_speaker
     announcement_pipeline:
         speaker: speaker_i2s_audio
