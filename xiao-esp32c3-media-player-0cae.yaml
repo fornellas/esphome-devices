@@ -1,0 +1,10 @@
+substitutions:
+  ota_password: !secret xiao-esp32c3-media-player-0cae_ota_password
+  api_encryption_key: !secret xiao-esp32c3-media-player-0cae_api_encryption_key
+
+packages:
+  - !include packages/devices/xiao-esp32c3-media-player.yaml
+
+esphome:
+  name: xiao-esp32c3-media-player-0cae
+  friendly_name: "XIAO ESP32C3 Media Player 99cb"
