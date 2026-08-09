@@ -41,6 +41,7 @@ sensor:
       mode:
         pullup: true
         input: true
+      ignore_strapping_warning: true
     name: Power LED
     update_interval: 1s
     icon: mdi:power
