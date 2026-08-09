@@ -1,6 +1,7 @@
 substitutions:
   pin_pmsx003_reset: 18
   pin_pmsx003_set: 2
+  pin_pmsx003_set_ignore_strapping_warning: true
   pmsx003_model: "PMS7003"
   s88_address: 0xFE
   sht3xd_address: 0x44

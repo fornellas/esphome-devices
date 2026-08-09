@@ -1,3 +1,5 @@
+substitutions:
+  pin_pmsx003_set_ignore_strapping_warning: false
 esphome:
   on_boot:
     - priority: 600.0
@@ -111,6 +113,7 @@ output:
     id: pmsx003_set
     pin:
       number: ${pin_pmsx003_set}
+      ignore_strapping_warning: ${pin_pmsx003_set_ignore_strapping_warning}
 
   - platform: gpio
     id: pmsx003_reset
