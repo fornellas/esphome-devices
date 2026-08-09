@@ -3,10 +3,6 @@ packages:
   - !include ../common-esp32.yaml
 
 esphome:
-  platformio_options:
-    board_build.mcu: esp32c3
-    board_build.variant: esp32c3
-    board_build.flash_mode: dio
   on_boot:
     priority: 600.0
     then:
@@ -45,8 +41,10 @@ output:
   - platform: gpio
     # Whet this is high, dim red LED is lit.
     # When this is low, first bright blue LED is lit.
-    pin: GPIO2
-    inverted: true
+    pin:
+      number: GPIO2
+      inverted: true
+      ignore_strapping_warning: true
     id: output_red_blue_led_button1
 
   - platform: template
@@ -163,7 +161,9 @@ switch:
       - switch.turn_on: switch_relay2
 
   - platform: gpio
-    pin: GPIO8
+    pin:
+      number: GPIO8
+      ignore_strapping_warning: true
     id: switch_relay3
     internal: true
     restore_mode: RESTORE_DEFAULT_OFF
