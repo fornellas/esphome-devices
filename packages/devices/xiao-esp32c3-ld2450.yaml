@@ -7,10 +7,6 @@ packages:
   - !include ../common-esp32.yaml
   - !include ../sensors/ld2450.yaml
 
-esphome:
-  platformio_options:
-    board_build.flash_mode: dio
-
 esp32:
   board: seeed_xiao_esp32c3
   variant: esp32c3
@@ -19,6 +15,8 @@ uart:
   id: uart_ld2450
   baud_rate: 256000
   tx_pin: 10
-  rx_pin: 9
+  rx_pin:
+    number: 9
+    ignore_strapping_warning: true
   parity: NONE
   stop_bits: 1
