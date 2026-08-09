@@ -166,9 +166,10 @@ text_sensor:
         return {"N/A"};
       }
 
-      static char buffer[20];
-      sprintf(
+      static char buffer[32];
+      snprintf(
         buffer,
+        sizeof(buffer),
         "%04d-%02d-%02d %02d:%02d:%02d",
         time.year,
         time.month,

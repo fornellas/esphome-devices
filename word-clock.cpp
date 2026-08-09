@@ -190,7 +190,7 @@ void WordClock::set_time(esphome::ESPTime esp_time) {
 
   if (min < 35) {
     lit_hour_(hour);
-    if (min >= 0 && min <5) {
+    if (min < 5) {
       lit_word_o_clock_();
     } else {
       if (min < 30) {
