@@ -1,6 +1,4 @@
 substitutions:
-  mhz19_pin_duty_cycle: 7
-  mhz19_pin_hd: 6
   pin_pmsx003_reset: 3
   pin_pmsx003_set: 0
   pmsx003_model: "PMS7003"
@@ -10,7 +8,6 @@ substitutions:
 packages:
   - !include ../common.yaml
   - !include ../common-esp32.yaml
-  - !include ../sensors/mhz19.yaml
   - !include ../sensors/sht3xd.yaml
   - !include ../sensors/pmsx003.yaml
 
@@ -54,11 +51,6 @@ esp32:
     type: esp-idf
 
 uart:
-  - id: uart_mhz19
-    rx_pin: 5
-    tx_pin: 4
-    baud_rate: 9600
-
   - id: uart_pmsx003
     rx_pin: 1
     tx_pin:
@@ -77,8 +69,6 @@ sensor:
     lambda: |-
       double aqi = -1;
 
-      if (id(mhz19_aqi).state != NAN && id(mhz19_aqi).state > aqi)
-        aqi = id(mhz19_aqi).state;
       if (id(pmsx003_aqi).state != NAN && id(pmsx003_aqi).state > aqi)
         aqi = id(pmsx003_aqi).state;
 
@@ -106,35 +96,10 @@ output:
       number: 9
       ignore_strapping_warning: true
 
-  - platform: gpio
-    id: mhz19_calibration_led
-    pin: 21
-
   - platform: slow_pwm
     id: aqi_led
     period: 1s
     pin: 20
-
-binary_sensor:
-  - platform: gpio
-    id: mhz19_sensor_calibrate_zero
-    pin:
-      number: 18
-      mode: INPUT_PULLUP
-    on_press:
-      then:
-        - script.execute: mhz19_calibrate_zero
-
-button:
-  - platform: template
-    name: "MH-Z19: Calibrate Zero"
-    entity_category: config
-    on_press:
-      then:
-        - output.turn_on: mhz19_calibration_led
-        - script.execute: mhz19_calibrate_zero
-        - delay: 2s
-        - output.turn_off: mhz19_calibration_led
 
 time:
   - platform: sntp
