@@ -28,11 +28,13 @@ button:
 sensor:
   - platform: uptime
     name: "Uptime"
+    update_interval: 1min
 
 text_sensor:
   - platform: uptime
     name: Uptime
     disabled_by_default: true
+    update_interval: 1min
 
   - platform: version
     name: "ESPHome Version"
