@@ -24,14 +24,17 @@ sensor:
       name: "CSE7761: Voltage"
       id: cse7761_voltage_sensor
       internal: ${cse7761_voltage_internal}
+      disabled_by_default: true
     current_1:
       name: "CSE7761: Current 1"
       id: cse7761_current_1_sensor
       internal: ${cse7761_current_1_internal}
+      disabled_by_default: true
     current_2:
       name: "CSE7761: Current 2"
       id: cse7761_current_2_sensor
       internal: ${cse7761_current_2_internal}
+      disabled_by_default: true
     active_power_1:
       name: "CSE7761: Active Power 1"
       id: cse7761_active_power_1_sensor
@@ -52,9 +55,11 @@ sensor:
       name: "CSE7761: Frequency"
       id: cse7761_frequency_sensor
       internal: ${cse7761_frequency_internal}
+      disabled_by_default: true
     power_factor:
       name: "CSE7761: Power Factor"
       id: cse7761_power_factor_sensor
       internal: ${cse7761_power_factor_internal}
-    update_interval: 1s
+      disabled_by_default: true
+    update_interval: 10s
     uart_id: cse7761_uart

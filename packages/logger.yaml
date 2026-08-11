@@ -5,3 +5,4 @@ select:
   - platform: logger
     id: logger_select
     name: "Logger"
+    disabled_by_default: true

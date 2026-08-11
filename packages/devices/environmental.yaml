@@ -75,7 +75,7 @@ sensor:
       if(aqi >= 0.0)
         return aqi;
       return NAN;
-    update_interval: 1s
+    update_interval: 10s
     on_value:
       then:
         - lambda: |-

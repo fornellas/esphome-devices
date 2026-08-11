@@ -4,16 +4,22 @@ sensor:
   - platform: debug
     free:
       name: "Debug: Heap Free"
+      disabled_by_default: true
     block:
       name: "Debug: Heap Max Block"
+      disabled_by_default: true
     loop_time:
       name: "Debug: Loop Time"
+      disabled_by_default: true
     cpu_frequency:
       name: "Debug: CPU Frequency"
+      disabled_by_default: true
 
 text_sensor:
   - platform: debug
     device:
       name: "Debug: Device"
+      disabled_by_default: true
     reset_reason:
       name: "Debug: Reset Reason"
+      disabled_by_default: true

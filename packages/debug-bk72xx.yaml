@@ -2,3 +2,4 @@ sensor:
   - platform: debug
     min_free:
       name: "Debug: Heap Min Free"
+      disabled_by_default: true

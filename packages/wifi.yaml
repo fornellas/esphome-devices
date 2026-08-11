@@ -10,24 +10,31 @@ text_sensor:
         name: "WiFi: IP Address 0"
       address_1:
         name: "WiFi: IP Address 1"
+        disabled_by_default: true
       address_2:
         name: "WiFi: IP Address 2"
+        disabled_by_default: true
       address_3:
         name: "WiFi: IP Address 3"
+        disabled_by_default: true
       address_4:
         name: "WiFi: IP Address 4"
+        disabled_by_default: true
     ssid:
       name: "WiFi: SSID"
     bssid:
       name: "WiFi: BSSID"
     mac_address:
       name: "WiFi: MAC Address"
+      disabled_by_default: true
     # scan_results:
     #   name: "WiFi: Scan Results"
     dns_address:
       name: "WiFi: DNS Address"
+      disabled_by_default: true
     power_save_mode:
       name: "WiFi: Power Save Mode"
+      disabled_by_default: true
 
 wifi:
   id: wifi_component

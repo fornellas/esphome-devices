@@ -2,8 +2,10 @@ sensor:
   - platform: debug
     min_free:
       name: "Debug: Heap Min Free"
+      disabled_by_default: true
     fragmentation:
       name: "Debug: Heap Fragmentation"
+      disabled_by_default: true
     # TODO This option requires component psram.
     # psram:
     #   name: "Debug: Free PSRAM"

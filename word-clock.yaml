@@ -179,7 +179,8 @@ text_sensor:
         time.second
       );
       return std::string(buffer);
-    update_interval: 1s
+    update_interval: 60s
+    disabled_by_default: true
 
 switch:
   - platform: template

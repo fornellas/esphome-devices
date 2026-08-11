@@ -38,6 +38,7 @@ binary_sensor:
       number: P6
       inverted: true
       mode: INPUT_PULLUP
+    disabled_by_default: true
     on_press:
       then:
         - switch.toggle: relay

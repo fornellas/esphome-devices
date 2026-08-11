@@ -5,4 +5,4 @@ sensor:
       name: "${sht3xd_model}: Temperature"
     humidity:
       name: "${sht3xd_model}: Humidity"
-    update_interval: 1s
+    update_interval: 10s
