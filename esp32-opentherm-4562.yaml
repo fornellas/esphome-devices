@@ -1,0 +1,8 @@
+substitutions:
+  ota_password: !secret esp32-opentherm-4562_ota_password
+  api_encryption_key: !secret esp32-opentherm-4562_api_encryption_key
+packages:
+  - !include packages/devices/esp32-opentherm.yaml
+esphome:
+  name: esp32-opentherm-4562
+  friendly_name: "ESP32 OpenTherm 4562"

@@ -1,0 +1,194 @@
+packages:
+  - !include ../common.yaml
+  - !include ../common-esp32.yaml
+
+esp32:
+  variant: esp32
+
+opentherm:
+  in_pin: 21
+  out_pin: 22
+  sync_mode: true
+  # controller_product_type:
+  # controller_product_version:
+  # opentherm_version_controller:
+  # controller_configuration:
+  # controller_id:
+  # before_send:
+  # before_process_response:
+
+number:
+  - platform: opentherm
+    t_set:
+      name: "OpenTherm: Central Heating Setpoint"
+      auto_max_value: true
+    t_set_ch2:
+      name: "OpenTherm: Central Heating Setpoint 2"
+      auto_max_value: true
+    cooling_control:
+      name: "OpenTherm: Cooling Control"
+    t_dhw_set:
+      name: "OpenTherm: Domestic Hot Water Setpoint"
+      auto_min_value: true
+      auto_max_value: true
+    max_t_set:
+      name: "OpenTherm: Maximum Central Heating Setpoint"
+      auto_min_value: true
+      auto_max_value: true
+    t_room_set:
+      name: "OpenTherm: Central Heating Room Temperature Setpoint"
+    t_room_set_ch2:
+      name: "OpenTherm: Central Heating Room Temperature Setpoint 2"
+    t_room:
+      name: "OpenTherm: Room Temperature"
+    max_rel_mod_level:
+      name: "OpenTherm: Maximum Relative Modulation Level"
+    otc_hc_ratio:
+      name: "OpenTherm: OTC Heat Curve Ratio"
+      auto_min_value: true
+      auto_max_value: true
+
+switch:
+  - platform: opentherm
+    ch_enable:
+      name: "OpenTherm: Central Heating Enabled"
+    dhw_enable:
+      name: "OpenTherm: Domestic Hot Water Enabled"
+    cooling_enable:
+      name: "OpenTherm: Cooling Enabled"
+    otc_active:
+      name: "OpenTherm: Outside Temperature Compensation Active"
+    ch2_active:
+      name: "OpenTherm: Central Heating 2 Active"
+    summer_mode_active:
+      name: "OpenTherm: Summer Mode Active"
+    dhw_block:
+      name: "OpenTherm: Domestic Hot Water Block"
+
+binary_sensor:
+  - platform: opentherm
+    fault_indication:
+      name: "OpenTherm: Status: Fault indication"
+    ch_active:
+      name: "OpenTherm: Status: Central Heating active"
+    dhw_active:
+      name: "OpenTherm: Status: Domestic Hot Water active"
+    flame_on:
+      name: "OpenTherm: Status: Flame on"
+    cooling_active:
+      name: "OpenTherm: Status: Cooling active"
+    ch2_active:
+      name: "OpenTherm: Status: Central Heating 2 active"
+    diagnostic_indication:
+      name: "OpenTherm: Status: Diagnostic event"
+    electricity_production:
+      name: "OpenTherm: Status: Electricity production"
+    dhw_present:
+      name: "OpenTherm: Configuration: DHW present"
+    control_type_on_off:
+      name: "OpenTherm: Configuration: Control type is on-off"
+    cooling_supported:
+      name: "OpenTherm: Configuration: Cooling supported"
+    dhw_storage_tank:
+      name: "OpenTherm: Configuration: DHW storage tank"
+    controller_pump_control_allowed:
+      name: "OpenTherm: Configuration: Controller pump control allowed"
+    ch2_present:
+      name: "OpenTherm: Configuration: CH2 present"
+    water_filling:
+      name: "OpenTherm: Configuration: Remote water filling"
+    heat_mode:
+      name: "OpenTherm: Configuration: Heating or cooling"
+    dhw_setpoint_transfer_enabled:
+      name: "OpenTherm: Remote boiler parameters: DHW setpoint transfer enabled"
+    max_ch_setpoint_transfer_enabled:
+      name: "OpenTherm: Remote boiler parameters: CH maximum setpoint transfer enabled"
+    dhw_setpoint_rw:
+      name: "OpenTherm: Remote boiler parameters: DHW setpoint read-write"
+    max_ch_setpoint_rw:
+      name: "OpenTherm: Remote boiler parameters: CH maximum setpoint read-write"
+    service_request:
+      name: "OpenTherm: Service required"
+    lockout_reset:
+      name: "OpenTherm: Lockout Reset"
+    low_water_pressure:
+      name: "OpenTherm: Low water pressure fault"
+    flame_fault:
+      name: "OpenTherm: Flame fault"
+    air_pressure_fault:
+      name: "OpenTherm: Air pressure fault"
+    water_over_temp:
+      name: "OpenTherm: Water overtemperature"
+
+sensor:
+  - platform: opentherm
+    rel_mod_level:
+      name: "OpenTherm: Relative modulation level"
+    ch_pressure:
+      name: "OpenTherm: Water pressure in CH circuit"
+    dhw_flow_rate:
+      name: "OpenTherm: Water flow rate in DHW circuit"
+    t_boiler:
+      name: "OpenTherm: Boiler water temperature"
+    t_dhw:
+      name: "OpenTherm: DHW temperature"
+    t_outside:
+      name: "OpenTherm: Outside temperature"
+    t_ret:
+      name: "OpenTherm: Return water temperature"
+    t_storage:
+      name: "OpenTherm: Solar storage temperature"
+    t_collector:
+      name: "OpenTherm: Solar collector temperature"
+    t_flow_ch2:
+      name: "OpenTherm: Flow water temperature CH2 circuit"
+    t_dhw2:
+      name: "OpenTherm: Domestic hot water temperature 2"
+    t_exhaust:
+      name: "OpenTherm: Boiler exhaust temperature"
+    fan_speed:
+      name: "OpenTherm: Boiler fan speed"
+    fan_speed_setpoint:
+      name: "OpenTherm: Boiler fan speed setpoint"
+    flame_current:
+      name: "OpenTherm: Boiler flame current"
+    burner_starts:
+      name: "OpenTherm: Number of starts burner"
+    ch_pump_starts:
+      name: "OpenTherm: Number of starts CH pump"
+    dhw_pump_valve_starts:
+      name: "OpenTherm: Number of starts DHW pump-valve"
+    dhw_burner_starts:
+      name: "OpenTherm: Number of starts burner during DHW mode"
+    burner_operation_hours:
+      name: "OpenTherm: Number of hours that burner is in operation"
+    ch_pump_operation_hours:
+      name: "OpenTherm: Number of hours that CH pump has been running"
+    dhw_pump_valve_operation_hours:
+      name: "OpenTherm: Number of hours that DHW pump has been running or DHW valve has been opened"
+    dhw_burner_operation_hours:
+      name: "OpenTherm: Number of hours that burner is in operation during DHW mode"
+    t_dhw_set_ub:
+      name: "OpenTherm: Upper bound for adjustment of DHW setpoint"
+    t_dhw_set_lb:
+      name: "OpenTherm: Lower bound for adjustment of DHW setpoint"
+    max_t_set_ub:
+      name: "OpenTherm: Upper bound for adjustment of max CH setpoint"
+    max_t_set_lb:
+      name: "OpenTherm: Lower bound for adjustment of max CH setpoint"
+    t_dhw_set:
+      name: "OpenTherm: Domestic hot water temperature setpoint"
+    max_t_set:
+      name: "OpenTherm: Maximum allowable CH water setpoint"
+    opentherm_version_device:
+      name: "OpenTherm: Version of OpenTherm implemented by device"
+    device_type:
+      name: "OpenTherm: Device product type"
+    device_version:
+      name: "OpenTherm: Device product version"
+    device_id:
+      name: "OpenTherm: Device ID code"
+    otc_hc_ratio_ub:
+      name: "OpenTherm: OTC heat curve ratio upper bound"
+    otc_hc_ratio_lb:
+      name: "OpenTherm: OTC heat curve ratio lower bound"
