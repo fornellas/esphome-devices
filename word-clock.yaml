@@ -128,7 +128,7 @@ light:
   - platform: esp32_rmt_led_strip
     id: word_clock_light
     num_leds: 76
-    rgb_order: GRB
+    channel_colors: GRB
     chipset: WS2812
     pin: 10
     default_transition_length: 0s
