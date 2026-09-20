@@ -1,0 +1,225 @@
+# time:
+#   - platform: sntp
+#     id: my_time
+
+opentherm42:
+  # §5.3.4 Class 4, IDs 20/21/22: keeps the boiler's clock synced to this time source.
+  # time_id: my_time
+
+number:
+  - platform: opentherm42
+    # §5.3.4 Class 4, ID 16: Room Setpoint -- current room temperature setpoint (degrees C, -40..127).
+    sensor_and_informational_data_room_setpoint:
+      name: "C4: Room Setpoint"
+      initial_value: 20.0
+    # §5.3.4 Class 4, ID 23: Room Setpoint CH2 -- current room setpoint for the 2nd CH circuit
+    # (degrees C, -40..127).
+    # sensor_and_informational_data_room_setpoint_ch2:
+    #   name: "C4: Room Setpoint CH2"
+    #   initial_value: 20.0
+    # §5.3.4 Class 4, ID 37: TrCH2 -- room temperature for the 2nd CH circuit (degrees C, -40..127).
+    # sensor_and_informational_data_trch2:
+    #   name: "C4: TrCH2"
+    #   initial_value: 20.0
+    # §5.3.4 Class 4, ID 24: Room temperature -- this master's own sensed room temperature
+    # (degrees C, -40..127), pushed to the boiler. No initial_value -- see
+    # OpenTherm42SensorFeedNumber's class comment.
+    sensor_and_informational_data_room_temperature:
+      name: "Sensor and Informational Data: Room temperature"
+    # §5.3.4 Class 4, ID 27: Outside temperature (degrees C, -40..127), provided by this master. No
+    # initial_value -- see OpenTherm42SensorFeedNumber's class comment.
+    sensor_and_informational_data_outside_temperature:
+      name: "C4: Outside temperature"
+    # §5.3.4 Class 4, ID 38: Relative Humidity (0..100%), provided by this master.
+    # sensor_and_informational_data_relative_humidity:
+    #   name: "C4: Relative Humidity"
+    # §5.3.4 Class 4, ID 78 LB: Relative humidity exhaust air (0..100%), provided by this master.
+    # sensor_and_informational_data_relative_humidity_exhaust_air:
+    #   name: "C4: Relative humidity exhaust air"
+    # §5.3.4 Class 4, ID 79: CO2 level exhaust air (0..2000 ppm), provided by this master.
+    # sensor_and_informational_data_co2_level:
+    #   name: "C4: CO2 level"
+
+binary_sensor:
+  - platform: opentherm42
+    # §5.3.4 Class 4, IDs 20/21/22: synthetic diagnostic entity -- true only once the most recent
+    # Day-of-week/Time, Date and Year writes (see time_id above) all succeeded. Requires time_id.
+    # sensor_and_informational_data_time_synchronized:
+    #   name: "C4: Time synchronized"
+
+button:
+  - platform: opentherm42
+    # §5.3.4 Class 4, ID 96: reset by writing zero (optional for the boiler to honor).
+    sensor_and_informational_data_cooling_operation_hours_reset:
+      name: "C4: Cooling Operation hours reset"
+    # §5.3.4 Class 4, ID 97: reset by writing zero (optional for the boiler to honor).
+    # sensor_and_informational_data_power_cycles_reset:
+    #   name: "C4: Power Cycles reset"
+    # §5.3.4 Class 4, ID 109: reset by writing zero (optional for the boiler to honor).
+    # sensor_and_informational_data_electricity_producer_starts_reset:
+    #   name: "C4: Electricity producer starts reset"
+    # §5.3.4 Class 4, ID 110: reset by writing zero (optional for the boiler to honor).
+    # sensor_and_informational_data_electricity_producer_hours_reset:
+      # name: "C4: Electricity producer hours reset"
+    # §5.3.4 Class 4, ID 112: reset by writing zero (optional for the boiler to honor).
+    # sensor_and_informational_data_cumulative_electricity_production_reset:
+    #   name: "C4: Cumulative Electricity production reset"
+    # §5.3.4 Class 4, ID 113: reset by writing zero (optional for the boiler to honor).
+    sensor_and_informational_data_number_of_unsuccessful_burner_starts_reset:
+      name: "C4: Number of un-successful burner starts reset"
+    # §5.3.4 Class 4, ID 114: reset by writing zero (optional for the boiler to honor).
+    sensor_and_informational_data_number_of_times_flame_signal_too_low_reset:
+      name: "C4: Number of times flame signal too low reset"
+    # §5.3.4 Class 4, ID 116: reset by writing zero (optional for the boiler to honor).
+    sensor_and_informational_data_successful_burner_starts_reset:
+      name: "C4: Successful Burner starts reset"
+    # §5.3.4 Class 4, ID 117: reset by writing zero (optional for the boiler to honor).
+    sensor_and_informational_data_ch_pump_starts_reset:
+      name: "C4: CH pump starts reset"
+    # §5.3.4 Class 4, ID 118: reset by writing zero (optional for the boiler to honor).
+    sensor_and_informational_data_dhw_pump_valve_starts_reset:
+      name: "C4: DHW pump-valve starts reset"
+    # §5.3.4 Class 4, ID 119: reset by writing zero (optional for the boiler to honor).
+    sensor_and_informational_data_dhw_burner_starts_reset:
+      name: "C4: DHW burner starts reset"
+    # §5.3.4 Class 4, ID 120: reset by writing zero (optional for the boiler to honor).
+    sensor_and_informational_data_burner_operation_hours_reset:
+      name: "C4: Burner operation hours reset"
+    # §5.3.4 Class 4, ID 121: reset by writing zero (optional for the boiler to honor).
+    sensor_and_informational_data_ch_pump_operation_hours_reset:
+      name: "C4: CH pump operation hours reset"
+    # §5.3.4 Class 4, ID 122: reset by writing zero (optional for the boiler to honor).
+    sensor_and_informational_data_dhw_pump_valve_operation_hours_reset:
+      name: "C4: DHW pump-valve operation hours reset"
+    # §5.3.4 Class 4, ID 123: reset by writing zero (optional for the boiler to honor).
+    sensor_and_informational_data_dhw_burner_operation_hours_reset:
+      name: "C4: DHW burner operation hours reset"
+    # §5.3.4 Class 4, IDs 20/21/22: forces an immediate time-sync attempt (see time_id above).
+    # Requires time_id.
+    # sensor_and_informational_data_sync_time:
+    #   name: "C4: Sync time"
+
+text_sensor:
+  - platform: opentherm42
+    # §5.3.4 Class 4, IDs 20/21/22: the boiler's own reported Day-of-week/Time, Date and Year --
+    # independent of time_id above (that's the write side).
+    # sensor_and_informational_data_date_time:
+    #   name: "C4: Date and time"
+
+sensor:
+  - platform: opentherm42
+    # §5.3.4 Class 4, ID 17: Relative Modulation Level (0..100%). 0% = minimum modulation level,
+    # 100% = maximum modulation level.
+    sensor_and_informational_data_relative_modulation_level:
+      name: "C4: Relative Modulation Level"
+    # §5.3.4 Class 4, ID 18: CH water pressure -- water pressure of the boiler CH circuit (bar, 0..5).
+    sensor_and_informational_data_ch_water_pressure:
+      name: "C4: CH water pressure"
+    # §5.3.4 Class 4, ID 19: DHW flow rate -- water flow rate through the DHW circuit (l/min, 0..16).
+    sensor_and_informational_data_dhw_flow_rate:
+      name: "C4: DHW flow rate"
+    # §5.3.4 Class 4, ID 25: Boiler water temp. -- flow water temperature from the boiler (degrees C).
+    sensor_and_informational_data_boiler_water_temperature:
+      name: "C4: Boiler water temp."
+    # §5.3.4 Class 4, ID 26: DHW temperature -- domestic hot water temperature (degrees C).
+    sensor_and_informational_data_dhw_temperature:
+      name: "C4: DHW temperature"
+    # §5.3.4 Class 4, ID 28: Return water temperature to the boiler (degrees C).
+    sensor_and_informational_data_return_water_temperature:
+      name: "C4: Return water temperature"
+    # §5.3.4 Class 4, ID 29: Solar storage temperature (degrees C).
+    # sensor_and_informational_data_solar_storage_temperature:
+    #   name: "C4: Solar storage temperature"
+    # §5.3.4 Class 4, ID 30: Solar collector temperature (degrees C, -40..250).
+    # sensor_and_informational_data_solar_collector_temperature:
+    #   name: "C4: Solar collector temperature"
+    # §5.3.4 Class 4, ID 31: Flow temperature CH2 -- flow water temperature of the 2nd CH circuit (degrees C).
+    # sensor_and_informational_data_flow_temperature_ch2:
+    #   name: "C4: Flow temperature CH2"
+    # §5.3.4 Class 4, ID 32: DHW2 temperature -- domestic hot water temperature 2 (degrees C).
+    # sensor_and_informational_data_dhw2_temperature:
+    #   name: "C4: DHW2 temperature"
+    # §5.3.4 Class 4, ID 33: Exhaust temperature (degrees C, -40..500).
+    sensor_and_informational_data_exhaust_temperature:
+      name: "C4: Exhaust temperature"
+    # §5.3.4 Class 4, ID 34: Boiler heat exchanger temperature (degrees C).
+    # sensor_and_informational_data_boiler_heat_exchanger_temperature:
+    #   name: "C4: Boiler heat exchanger temperature"
+    # §5.3.4 Class 4, ID 35 HB: Actual boiler fan speed Setpoint in Hz (RPM/60), 0..255.
+    sensor_and_informational_data_boiler_fan_speed_setpoint:
+      name: "C4: Boiler fan speed Setpoint"
+    # §5.3.4 Class 4, ID 35 LB: Actual boiler fan speed in Hz (RPM/60), 0..255.
+    sensor_and_informational_data_boiler_fan_speed:
+      name: "C4: Boiler fan speed"
+    # §5.3.4 Class 4, ID 36: Flame current -- electrical current through the burner flame (uA, 0..127).
+    sensor_and_informational_data_flame_current:
+      name: "C4: Flame current"
+    # §5.3.4 Class 4, ID 77 LB: Relative ventilation (0-100%). 0% is minimum set value, 100% is maximum.
+    # sensor_and_informational_data_relative_ventilation:
+    #   name: "C4: Relative ventilation"
+    # §5.3.4 Class 4, ID 80: Supply inlet temperature (degrees C).
+    # sensor_and_informational_data_supply_inlet_temperature:
+    #   name: "C4: Supply inlet temperature"
+    # §5.3.4 Class 4, ID 81: Supply outlet temperature (degrees C).
+    # sensor_and_informational_data_supply_outlet_temperature:
+    #   name: "C4: Supply outlet temperature"
+    # §5.3.4 Class 4, ID 82: Exhaust inlet temperature (degrees C).
+    # sensor_and_informational_data_exhaust_inlet_temperature:
+    #   name: "C4: Exhaust inlet temperature"
+    # §5.3.4 Class 4, ID 83: Exhaust outlet temperature (degrees C).
+    # sensor_and_informational_data_exhaust_outlet_temperature:
+    #   name: "C4: Exhaust outlet temperature"
+    # §5.3.4 Class 4, ID 84: Actual exhaust fan speed (rpm, 0..6000).
+    # sensor_and_informational_data_actual_exhaust_fan_speed:
+    #   name: "C4: Actual exhaust fan speed"
+    # §5.3.4 Class 4, ID 85: Actual inlet fan speed (rpm, 0..6000).
+    # sensor_and_informational_data_actual_inlet_fan_speed:
+    #   name: "C4: Actual inlet fan speed"
+    # §5.3.4 Class 4, ID 96: Number of hours the boiler is in Cooling Mode.
+    # sensor_and_informational_data_cooling_operation_hours:
+    #   name: "C4: Cooling Operation hours"
+    # §5.3.4 Class 4, ID 97: Number of Power Cycles of the boiler (wake-up after Reset).
+    # sensor_and_informational_data_power_cycles:
+    #   name: "C4: Power Cycles"
+    # §5.3.4 Class 4, ID 109: Number of starts of the electricity producer.
+    # sensor_and_informational_data_electricity_producer_starts:
+    #   name: "C4: Electricity producer starts"
+    # §5.3.4 Class 4, ID 110: Number of hours the electricity producer is in operation.
+    # sensor_and_informational_data_electricity_producer_hours:
+    #   name: "C4: Electricity producer hours"
+    # §5.3.4 Class 4, ID 111: Current electricity production (W).
+    # sensor_and_informational_data_electricity_production:
+    #   name: "C4: Electricity production"
+    # §5.3.4 Class 4, ID 112: Cumulative Electricity production (kWh).
+    # sensor_and_informational_data_cumulative_electricity_production:
+    #   name: "C4: Cumulative Electricity production"
+    # §5.3.4 Class 4, ID 113: Number of un-successful burner starts.
+    sensor_and_informational_data_number_of_unsuccessful_burner_starts:
+      name: "C4: Number of un-successful burner starts"
+    # §5.3.4 Class 4, ID 114: Number of times the flame signal was too low.
+    sensor_and_informational_data_number_of_times_flame_signal_too_low:
+      name: "C4: Number of times flame signal was too low"
+    # §5.3.4 Class 4, ID 116: Successful Burner starts.
+    sensor_and_informational_data_successful_burner_starts:
+      name: "C4: Successful Burner starts"
+    # §5.3.4 Class 4, ID 117: Number of starts of the CH pump.
+    sensor_and_informational_data_ch_pump_starts:
+      name: "C4: CH pump starts"
+    # §5.3.4 Class 4, ID 118: Number of starts of the DHW pump/valve.
+    sensor_and_informational_data_dhw_pump_valve_starts:
+      name: "C4: DHW pump-valve starts"
+    # §5.3.4 Class 4, ID 119: Number of starts of the burner in DHW mode.
+    sensor_and_informational_data_dhw_burner_starts:
+      name: "C4: DHW burner starts"
+    # §5.3.4 Class 4, ID 120: Number of hours the burner is in operation (i.e. flame on).
+    sensor_and_informational_data_burner_operation_hours:
+      name: "C4: Burner operation hours"
+    # §5.3.4 Class 4, ID 121: Number of hours the CH pump has been running.
+    sensor_and_informational_data_ch_pump_operation_hours:
+      name: "C4: CH pump operation hours"
+    # §5.3.4 Class 4, ID 122: Number of hours the DHW pump has been running or the DHW valve has been open.
+    sensor_and_informational_data_dhw_pump_valve_operation_hours:
+      name: "C4: DHW pump-valve operation hours"
+    # §5.3.4 Class 4, ID 123: Number of hours the burner is in operation during DHW mode.
+    sensor_and_informational_data_dhw_burner_operation_hours:
+      name: "C4: DHW burner operation hours"

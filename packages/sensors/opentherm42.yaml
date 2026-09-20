@@ -1,0 +1,22 @@
+external_components:
+  - source:
+      type: git
+      url: https://github.com/fornellas/esphome
+      ref: opentherm
+    refresh: 0s
+    components: [ opentherm42 ]
+
+packages:
+  - !include opentherm42-class1.yaml
+  - !include opentherm42-class2.yaml
+  - !include opentherm42-class3.yaml
+  - !include opentherm42-class4.yaml
+  - !include opentherm42-class5.yaml
+  # - !include opentherm42-class6.yaml
+
+opentherm42:
+  in_pin: ${opentherm42_in_pin}
+  out_pin: ${opentherm42_out_pin}
+  # §4.4.1: tolerate a DATA_INVALID for up to 10s before actually invalidating an entity, since real
+  # hardware has been observed answering DATA_INVALID transiently for a second or two.
+  max_data_invalid: 10s

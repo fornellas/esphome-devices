@@ -1,0 +1,55 @@
+button:
+  - platform: opentherm42
+    # §5.3.3 Class 3, ID 4 HB = 0: Back to Normal operation mode
+    remote_request_back_to_normal_operation_mode:
+      name: "C3: Back to Normal operation mode"
+    # §5.3.3 Class 3, ID 4 HB = 1: "BLOR" = Boiler Lock-out Reset request
+    remote_request_boiler_lockout_reset:
+      name: "C3: Boiler Lock-out Reset"
+    # §5.3.3 Class 3, ID 4 HB = 2: "CHWF" = CH water filling request
+    remote_request_ch_water_filling:
+      name: "C3: CH water filling"
+    # §5.3.3 Class 3, ID 4 HB = 3: Service mode maximum power request
+    # (for instance for CO2 measurement during Chimney Sweep Function)
+    remote_request_service_mode_maximum_power:
+      name: "C3: Service mode maximum power"
+    # §5.3.3 Class 3, ID 4 HB = 4: Service mode minimum power request (CO2 measurement)
+    remote_request_service_mode_minimum_power:
+      name: "C3: Service mode minimum power"
+    # §5.3.3 Class 3, ID 4 HB = 5: Service mode spark test request (no gas)
+    remote_request_service_mode_spark_test:
+      name: "C3: Service mode spark test"
+    # §5.3.3 Class 3, ID 4 HB = 6: Service mode fan maximum speed request (no flame)
+    remote_request_service_mode_fan_maximum_speed:
+      name: "C3: Service mode fan maximum speed"
+    # §5.3.3 Class 3, ID 4 HB = 7: Service mode fan to minimum speed request (no flame)
+    remote_request_service_mode_fan_minimum_speed:
+      name: "C3: Service mode fan minimum speed"
+    # §5.3.3 Class 3, ID 4 HB = 8: Service mode 3-way valve to CH request (no pump, no flame)
+    remote_request_service_mode_3_way_valve_to_ch:
+      name: "C3: Service mode 3-way valve to CH"
+    # §5.3.3 Class 3, ID 4 HB = 9: Service mode 3-way valve to DHW request (no pump, no flame)
+    remote_request_service_mode_3_way_valve_to_dhw:
+      name: "C3: Service mode 3-way valve to DHW"
+    # §5.3.3 Class 3, ID 4 HB = 10: Request to reset service request flag
+    remote_request_reset_service_request_flag:
+      name: "C3: Reset service request flag"
+    # §5.3.3 Class 3, ID 4 HB = 11: Service test 1. This is an OEM specific test.
+    remote_request_service_test_1:
+      name: "C3: Service test 1"
+    # §5.3.3 Class 3, ID 4 HB = 12: Automatic hydronic air purge.
+    remote_request_automatic_hydronic_air_purge:
+      name: "C3: Automatic hydronic air purge"
+
+text_sensor:
+  - platform: opentherm42
+    # §5.3.3 Class 3, ID 4 LB: the most recent Request-Response-Code's meaning.
+    remote_request_last_response:
+      name: "C3: Last response"
+
+sensor:
+  - platform: opentherm42
+    # §5.3.3 Class 3, ID 4 LB: Req-Response-Code of the most recent remote request
+    # (0..127 = request refused, 128..255 = request accepted).
+    remote_request_last_response_code:
+      name: "C3: Last response code"

@@ -1,0 +1,15 @@
+substitutions:
+  opentherm42_in_pin: 21
+  opentherm42_out_pin: 22
+
+packages:
+  - !include ../common.yaml
+  - !include ../common-esp32.yaml
+  - !include ../sensors/opentherm42.yaml
+
+esp32:
+  variant: esp32
+  framework:
+    advanced:
+      minimum_chip_revision: "3.1"
+      sram1_as_iram: true
