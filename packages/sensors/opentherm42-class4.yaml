@@ -25,7 +25,7 @@ number:
     # (degrees C, -40..127), pushed to the boiler. No initial_value -- see
     # OpenTherm42SensorFeedNumber's class comment.
     sensor_and_informational_data_room_temperature:
-      name: "Sensor and Informational Data: Room temperature"
+      name: "C4 Data: Room temperature"
     # §5.3.4 Class 4, ID 27: Outside temperature (degrees C, -40..127), provided by this master. No
     # initial_value -- see OpenTherm42SensorFeedNumber's class comment.
     sensor_and_informational_data_outside_temperature:

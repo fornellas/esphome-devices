@@ -7,16 +7,38 @@ external_components:
     components: [ opentherm42 ]
 
 packages:
+  # Class 1: Control and Status Information
+  # This class contains basic control information from the master and status information exchange
+  # (including fault status) and incorporates all the mandatory OpenTherm data.
   - !include opentherm42-class1.yaml
+  # Class 2: Configuration Information
+  # Information relating to the configuration of the master and slave and Member identification.
   - !include opentherm42-class2.yaml
+  # Class 3: Remote Commands
+  # This class allows for commands to be passed from the master to the slave.
   - !include opentherm42-class3.yaml
+  # Class 4: Sensor and Informational Data
+  # This class covers typically sensor temperatures, pressures etc.
   - !include opentherm42-class4.yaml
+  # Class 5: Remote Boiler Parameters
+  # These are parameters of the slave device which may be read or set by the master and are
+  # specific to boiler applications.
   - !include opentherm42-class5.yaml
+  # Class 6: Transparent Slave Parameters
+  # This class allows slave parameters to be read or set by the master without knowledge of their
+  # physical or application-specific meaning.
   # - !include opentherm42-class6.yaml
+  # Class 7: Fault History Information
+  # This data allows historical fault information to be passed from the slave to the master.
+  # Control of Special Applications
+  - !include opentherm42-class7.yaml
+  # Class 8: Control of Special Applications
+  # This class defines data id’s to be exchanged between the master and a application specific slave.
+  - !include opentherm42-class8.yaml
 
 opentherm42:
   in_pin: ${opentherm42_in_pin}
   out_pin: ${opentherm42_out_pin}
-  # §4.4.1: tolerate a DATA_INVALID for up to 10s before actually invalidating an entity, since real
+  # §4.4.1: tolerate a DATA_INVALID for up to 5m before actually invalidating an entity, since real
   # hardware has been observed answering DATA_INVALID transiently for a second or two.
-  max_data_invalid: 10s
+  max_data_invalid: 5min
