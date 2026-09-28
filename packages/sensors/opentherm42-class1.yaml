@@ -1,3 +1,8 @@
+opentherm42:
+  # §5.3.1 Class 1, ID 5: application-specific fault flags + OEM fault code -- required since the
+  # OEM fault code sensor and several fault-flag binary_sensors below are configured.
+  control_and_status_information_application_specific_fault_flags_update_every: 8
+
 switch:
   - platform: opentherm42
     # §5.3.1 Class 1, ID 0 HB bit 0: CH enable [ CH is disabled, CH is enabled ]
@@ -52,6 +57,7 @@ number:
     control_and_status_information_control_setpoint:
       name: "C1: Control Setpoint"
       initial_value: 40.0
+      update_every: 1
     # §5.3.1 Class 1, ID 8: Control Setpoint 2 (TsetCH2), setpoint for the 2nd CH circuit (degrees C, 0..100).
     # control_and_status_information_control_setpoint_2_tsetch2:
     #   name: "C1: Control Setpoint 2 (TsetCH2)"
@@ -172,6 +178,7 @@ sensor:
     # §5.3.1 Class 1, ID 115: OEM diagnostic code (0..65535) -- an OEM-specific diagnostic/service code.
     control_and_status_information_oem_diagnostic_code:
       name: "C1: OEM diagnostic code"
+      update_every: 10
     # §5.3.1 Class 1, ID 73: OEM diagnostic code ventilation/heat-recovery (0..65535).
     # control_and_status_information_oem_diagnostic_code_ventilation_heat_recovery:
     #   name: "C1: OEM diagnostic code ventilation-heat-recovery"

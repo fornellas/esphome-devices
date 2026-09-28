@@ -39,6 +39,26 @@ packages:
 opentherm42:
   in_pin: ${opentherm42_in_pin}
   out_pin: ${opentherm42_out_pin}
-  # §4.4.1: tolerate a DATA_INVALID for up to 5m before actually invalidating an entity, since real
-  # hardware has been observed answering DATA_INVALID transiently for a second or two.
-  max_data_invalid: 5min
+  # §4.4.1: tolerate DATA_INVALID for a handful of consecutive attempts before actually invalidating
+  # an entity, since real hardware has been observed answering DATA_INVALID transiently for a second
+  # or two. Counts consecutive DATA_INVALID responses per id, not wall-clock time -- see
+  # opentherm42/__init__.py's CONF_MAX_DATA_INVALID.
+  max_data_invalid: 5
+  # §5.2's mandatory heartbeat (id=0) -- unconditionally required regardless of which entities are
+  # configured.
+  control_and_status_information_boiler_status_update_every: 1
+  # §5.3.2 Class 2, IDs 2/124/126: this master's own identity, announced to the boiler -- no entity
+  # of its own, so unconditionally required.
+  configuration_information_master_configuration_update_every: 20
+  configuration_information_master_opentherm_version_update_every: 20
+  configuration_information_master_product_version_update_every: 20
+
+sensor:
+    - platform: opentherm42
+      # Synthetic diagnostic: how long the most recently completed sweep took, updated continuously.
+      # Unconditionally scheduled by the hub itself, so no update_every field of its own.
+      sensor_and_informational_data_sweep_duration:
+        name: "Sweep duration"
+      # Same nature as the sweep duration sensor above, but for a single pass rather than a whole sweep.
+      sensor_and_informational_data_pass_duration:
+        name: "Pass duration"

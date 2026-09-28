@@ -1,4 +1,12 @@
 
+opentherm42:
+  # §5.3.8.3 Class 8, ID 99: Operating Mode HC1/HC2/DHW + Manual DHW push2 -- required since
+  # control_of_special_applications_manual_dhw_push2 and the two selects below are configured.
+  control_of_special_applications_remote_override_operating_mode_update_every: 3
+  # §5.3.8.2 Class 8, ID 15: Maximum boiler capacity + Minimum modulation level -- required since
+  # both sensors below are configured.
+  control_of_special_applications_max_capacity_min_mod_level_update_every: 25
+
 switch:
   - platform: opentherm42
     # §5.3.8.3 Class 8, ID 99 HB bit 4: Manual DHW push2 -- read/write, packed alongside the three
@@ -17,6 +25,7 @@ number:
     control_of_special_applications_maximum_relative_modulation_level_setting:
       name: "C8: Maximum relative modulation level setting"
       initial_value: 100
+      update_every: 3
 
 text_sensor:
   - platform: opentherm42
@@ -55,6 +64,7 @@ sensor:
     # 0 = No override, 1..30 = Remote override room Setpoint.
     control_of_special_applications_remote_override_room_setpoint:
       name: "C8: Remote Override Room Setpoint"
+      update_every: 8
     # §5.3.8.3 Class 8, ID 39: Remote Override Room Setpoint 2 (degrees C, 0..30), same encoding.
     # control_of_special_applications_remote_override_room_setpoint_2:
     #   name: "C8: Remote Override Room Setpoint 2"

@@ -1,3 +1,12 @@
+opentherm42:
+  # §5.3.5 Class 5, ID 6: Remote-parameter transfer-enable/read-write flags -- required since the 4
+  # text_sensors below are configured.
+  pre_defined_remote_boiler_parameters_flags_update_every: 20
+  # §5.3.5 Class 5, ID 48: DHWsetp bounds -- required since both sensors below are configured.
+  pre_defined_remote_boiler_parameters_dhwsetp_update_every: 20
+  # §5.3.5 Class 5, ID 49: max CHsetp bounds -- required since both sensors below are configured.
+  pre_defined_remote_boiler_parameters_max_chsetp_update_every: 20
+
 number:
   - platform: opentherm42
     # §5.3.5 Class 5, ID 56: DHW Setpoint -- domestic hot water temperature setpoint (degrees C, 0..127).
@@ -5,10 +14,12 @@ number:
     pre_defined_remote_boiler_parameters_dhw_setpoint:
       name: "C5: DHW Setpoint"
       initial_value: 40.0
+      update_every: 20
     # §5.3.5 Class 5, ID 57: max CH water Setpoint -- maximum allowable CH water Setpoint (degrees C, 0..127).
     pre_defined_remote_boiler_parameters_max_ch_water_setpoint:
       name: "C5: max CH water Setpoint"
       initial_value: 50.0
+      update_every: 20
     # §5.3.5 Class 5, ID 87 HB: Nominal ventilation value -- nominal relative value for ventilation
     # (0-100%), i.e. the value for the mid position in case of a 3-speed ventilation system.
     # pre_defined_remote_boiler_parameters_nominal_ventilation_value:
