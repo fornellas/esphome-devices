@@ -25,6 +25,7 @@ number:
     # pre_defined_remote_boiler_parameters_nominal_ventilation_value:
     #   name: "C5: Nominal ventilation value"
     #   initial_value: 50
+    #   update_every: 6
 
 text_sensor:
   - platform: opentherm42

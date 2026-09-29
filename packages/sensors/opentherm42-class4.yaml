@@ -21,6 +21,7 @@ number:
     # sensor_and_informational_data_room_setpoint_ch2:
     #   name: "C4: Room Setpoint CH2"
     #   initial_value: 20.0
+    #   update_every: 2
     # §5.3.4 Class 4, ID 37: TrCH2 -- room temperature for the 2nd CH circuit (degrees C, -40..127).
     # sensor_and_informational_data_trch2:
     #   name: "C4: TrCH2"
@@ -38,12 +39,15 @@ number:
     # §5.3.4 Class 4, ID 38: Relative Humidity (0..100%), provided by this master.
     # sensor_and_informational_data_relative_humidity:
     #   name: "C4: Relative Humidity"
+    #   update_every: 5
     # §5.3.4 Class 4, ID 78 LB: Relative humidity exhaust air (0..100%), provided by this master.
     # sensor_and_informational_data_relative_humidity_exhaust_air:
     #   name: "C4: Relative humidity exhaust air"
+    #   update_every: 5
     # §5.3.4 Class 4, ID 79: CO2 level exhaust air (0..2000 ppm), provided by this master.
     # sensor_and_informational_data_co2_level:
     #   name: "C4: CO2 level"
+    #   update_every: 5
 
 binary_sensor:
   - platform: opentherm42
@@ -110,6 +114,7 @@ text_sensor:
     # independent of time_id above (that's the write side).
     # sensor_and_informational_data_date_time:
     #   name: "C4: Date and time"
+    #   update_every: 7
 
 sensor:
   - platform: opentherm42
@@ -141,15 +146,19 @@ sensor:
     # §5.3.4 Class 4, ID 29: Solar storage temperature (degrees C).
     # sensor_and_informational_data_solar_storage_temperature:
     #   name: "C4: Solar storage temperature"
+    #   update_every: 3
     # §5.3.4 Class 4, ID 30: Solar collector temperature (degrees C, -40..250).
     # sensor_and_informational_data_solar_collector_temperature:
     #   name: "C4: Solar collector temperature"
+    #   update_every: 3
     # §5.3.4 Class 4, ID 31: Flow temperature CH2 -- flow water temperature of the 2nd CH circuit (degrees C).
     # sensor_and_informational_data_flow_temperature_ch2:
     #   name: "C4: Flow temperature CH2"
+    #   update_every: 3
     # §5.3.4 Class 4, ID 32: DHW2 temperature -- domestic hot water temperature 2 (degrees C).
     # sensor_and_informational_data_dhw2_temperature:
     #   name: "C4: DHW2 temperature"
+    #   update_every: 3
     # §5.3.4 Class 4, ID 33: Exhaust temperature (degrees C, -40..500).
     sensor_and_informational_data_exhaust_temperature:
       name: "C4: Exhaust temperature"
@@ -157,6 +166,7 @@ sensor:
     # §5.3.4 Class 4, ID 34: Boiler heat exchanger temperature (degrees C).
     # sensor_and_informational_data_boiler_heat_exchanger_temperature:
     #   name: "C4: Boiler heat exchanger temperature"
+    #   update_every: 3
     # §5.3.4 Class 4, ID 35 HB: Actual boiler fan speed Setpoint in Hz (RPM/60), 0..255.
     sensor_and_informational_data_boiler_fan_speed_setpoint:
       name: "C4: Boiler fan speed Setpoint"
@@ -170,42 +180,55 @@ sensor:
     # §5.3.4 Class 4, ID 77 LB: Relative ventilation (0-100%). 0% is minimum set value, 100% is maximum.
     # sensor_and_informational_data_relative_ventilation:
     #   name: "C4: Relative ventilation"
+    #   update_every: 3
     # §5.3.4 Class 4, ID 80: Supply inlet temperature (degrees C).
     # sensor_and_informational_data_supply_inlet_temperature:
     #   name: "C4: Supply inlet temperature"
+    #   update_every: 3
     # §5.3.4 Class 4, ID 81: Supply outlet temperature (degrees C).
     # sensor_and_informational_data_supply_outlet_temperature:
     #   name: "C4: Supply outlet temperature"
+    #   update_every: 3
     # §5.3.4 Class 4, ID 82: Exhaust inlet temperature (degrees C).
     # sensor_and_informational_data_exhaust_inlet_temperature:
     #   name: "C4: Exhaust inlet temperature"
+    #   update_every: 3
     # §5.3.4 Class 4, ID 83: Exhaust outlet temperature (degrees C).
     # sensor_and_informational_data_exhaust_outlet_temperature:
     #   name: "C4: Exhaust outlet temperature"
+    #   update_every: 3
     # §5.3.4 Class 4, ID 84: Actual exhaust fan speed (rpm, 0..6000).
     # sensor_and_informational_data_actual_exhaust_fan_speed:
     #   name: "C4: Actual exhaust fan speed"
+    #   update_every: 3
     # §5.3.4 Class 4, ID 85: Actual inlet fan speed (rpm, 0..6000).
     # sensor_and_informational_data_actual_inlet_fan_speed:
     #   name: "C4: Actual inlet fan speed"
+    #   update_every: 3
     # §5.3.4 Class 4, ID 96: Number of hours the boiler is in Cooling Mode.
     # sensor_and_informational_data_cooling_operation_hours:
     #   name: "C4: Cooling Operation hours"
+    #   update_every: 8
     # §5.3.4 Class 4, ID 97: Number of Power Cycles of the boiler (wake-up after Reset).
     # sensor_and_informational_data_power_cycles:
     #   name: "C4: Power Cycles"
+    #   update_every: 8
     # §5.3.4 Class 4, ID 109: Number of starts of the electricity producer.
     # sensor_and_informational_data_electricity_producer_starts:
     #   name: "C4: Electricity producer starts"
+    #   update_every: 8
     # §5.3.4 Class 4, ID 110: Number of hours the electricity producer is in operation.
     # sensor_and_informational_data_electricity_producer_hours:
     #   name: "C4: Electricity producer hours"
+    #   update_every: 8
     # §5.3.4 Class 4, ID 111: Current electricity production (W).
     # sensor_and_informational_data_electricity_production:
     #   name: "C4: Electricity production"
+    #   update_every: 3
     # §5.3.4 Class 4, ID 112: Cumulative Electricity production (kWh).
     # sensor_and_informational_data_cumulative_electricity_production:
     #   name: "C4: Cumulative Electricity production"
+    #   update_every: 8
     # §5.3.4 Class 4, ID 113: Number of un-successful burner starts.
     sensor_and_informational_data_number_of_unsuccessful_burner_starts:
       name: "C4: Number of un-successful burner starts"

@@ -73,6 +73,8 @@ sensor:
     # §5.3.6 Class 6, ID 88 HB: Number of TSPs supported by the ventilation/heat-recovery system.
     # transparent_boiler_parameters_number_of_tsps_ventilation_heat_recovery:
     #   name: "C6: Number of TSP's ventilation-heat-recovery"
+    #   update_every: 7
     # §5.3.6 Class 6, ID 105 HB: Number of TSPs supported by the Solar Storage.
     # transparent_boiler_parameters_number_of_tsps_solar_storage:
     #   name: "C6: Number of TSP's Solar Storage"
+    #   update_every: 7

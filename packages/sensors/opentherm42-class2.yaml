@@ -88,6 +88,7 @@ sensor:
     # §5.3.2 Class 2, ID 75: OpenTherm protocol version implemented by the ventilation/heat-recovery system.
     # configuration_information_opentherm_version_ventilation_heat_recovery:
     #   name: "C2: OpenTherm version ventilation-heat-recovery"
+    #   update_every: 7
     # §5.3.2 Class 2, ID 76 HB: Ventilation/heat-recovery product version number and type: product type.
     # configuration_information_ventilation_heat_recovery_product_version_number_and_type_product_type:
     #   name: "C2: Ventilation-heat-recovery product version number and type: Product type"

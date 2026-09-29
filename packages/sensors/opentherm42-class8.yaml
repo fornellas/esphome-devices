@@ -20,6 +20,7 @@ number:
     # control_of_special_applications_cooling_control_signal:
     #   name: "C8: Cooling control signal"
     #   initial_value: 0
+    #   update_every: 2
     # §5.3.8.2 Class 8, ID 14: Maximum relative modulation level setting, for sequencer and
     # off-low&pump control applications (0..100%).
     control_of_special_applications_maximum_relative_modulation_level_setting:
@@ -68,3 +69,4 @@ sensor:
     # §5.3.8.3 Class 8, ID 39: Remote Override Room Setpoint 2 (degrees C, 0..30), same encoding.
     # control_of_special_applications_remote_override_room_setpoint_2:
     #   name: "C8: Remote Override Room Setpoint 2"
+    #   update_every: 3

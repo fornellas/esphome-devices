@@ -62,11 +62,13 @@ number:
     # control_and_status_information_control_setpoint_2_tsetch2:
     #   name: "C1: Control Setpoint 2 (TsetCH2)"
     #   initial_value: 40.0
+    #   update_every: 2
     # §5.3.1 Class 1, ID 71 LB: Control Setpoint ventilation/heat-recovery. Relative ventilation
     # position (0-100%): 0% is the minimum set ventilation, 100% is the maximum set ventilation.
     # control_and_status_information_control_setpoint_ventilation_heat_recovery:
     #   name: "C1: Control Setpoint ventilation-heat-recovery"
     #   initial_value: 0
+    #   update_every: 2
 
 binary_sensor:
   - platform: opentherm42
@@ -175,6 +177,7 @@ sensor:
     # §5.3.1 Class 1, ID 102 LB: OEM fault code Solar Storage (0..255). HB is entirely reserved.
     # control_and_status_information_oem_fault_code_solar_storage:
     #   name: "C1: OEM fault code Solar Storage"
+    #   update_every: 5
     # §5.3.1 Class 1, ID 115: OEM diagnostic code (0..65535) -- an OEM-specific diagnostic/service code.
     control_and_status_information_oem_diagnostic_code:
       name: "C1: OEM diagnostic code"
@@ -182,3 +185,4 @@ sensor:
     # §5.3.1 Class 1, ID 73: OEM diagnostic code ventilation/heat-recovery (0..65535).
     # control_and_status_information_oem_diagnostic_code_ventilation_heat_recovery:
     #   name: "C1: OEM diagnostic code ventilation-heat-recovery"
+    #   update_every: 5

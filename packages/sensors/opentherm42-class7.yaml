@@ -12,9 +12,11 @@ sensor:
     # §5.3.7 Class 7, ID 90 HB: Size of the fault history buffer for the ventilation/heat-recovery system.
     # fault_history_data_size_of_fault_buffer_ventilation_heat_recovery:
     #   name: "C7: Size of Fault Buffer ventilation-heat-recovery"
+    #   update_every: 7
     # §5.3.7 Class 7, ID 107 HB: Size of the fault history buffer for the Solar Storage.
     # fault_history_data_size_of_fault_buffer_solar_storage:
     #   name: "C7: Size of Fault Buffer Solar Storage"
+    #   update_every: 7
     # §5.3.7 Class 7, IDs 13/91/108: fault history entries are opaque and manufacturer-specific, so
     # unlike every other option here there's no spec-provided name/description -- name and index come
     # from whatever the boiler's own documentation says entry N means.
