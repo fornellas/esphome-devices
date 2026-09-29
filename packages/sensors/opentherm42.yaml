@@ -49,9 +49,9 @@ opentherm42:
   control_and_status_information_boiler_status_update_every: 1
   # §5.3.2 Class 2, IDs 2/124/126: this master's own identity, announced to the boiler -- no entity
   # of its own, so unconditionally required.
-  configuration_information_master_configuration_update_every: 20
-  configuration_information_master_opentherm_version_update_every: 20
-  configuration_information_master_product_version_update_every: 20
+  configuration_information_master_configuration_update_every: 6
+  configuration_information_master_opentherm_version_update_every: 6
+  configuration_information_master_product_version_update_every: 6
 
 sensor:
     - platform: opentherm42

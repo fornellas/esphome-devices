@@ -1,14 +1,14 @@
 opentherm42:
   # §5.3.7 Class 7, IDs 13/91/108: governs how fast the shared fault-history-buffer round-robin
   # rotation advances -- required since fault_history_data_fault_buffer below is configured.
-  fault_history_data_fault_buffer_update_every: 25
+  fault_history_data_fault_buffer_update_every: 7
 
 sensor:
   - platform: opentherm42
     # §5.3.7 Class 7, ID 12 HB: Size of the fault history buffer supported by the boiler.
     fault_history_data_size_of_fault_buffer:
       name: "C7: Size of Fault Buffer"
-      update_every: 25
+      update_every: 7
     # §5.3.7 Class 7, ID 90 HB: Size of the fault history buffer for the ventilation/heat-recovery system.
     # fault_history_data_size_of_fault_buffer_ventilation_heat_recovery:
     #   name: "C7: Size of Fault Buffer ventilation-heat-recovery"

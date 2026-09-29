@@ -8,10 +8,10 @@ opentherm42:
   controller_product_version: 0
   # §5.3.2 Class 2, ID 3: boiler configuration flags + boiler MemberID code -- required since the 8
   # text_sensors and the boiler_member_id_code sensor below are configured.
-  configuration_information_boiler_configuration_update_every: 20
+  configuration_information_boiler_configuration_update_every: 6
   # §5.3.2 Class 2, ID 127: boiler product version number and type -- required since both sensors
   # below are configured.
-  configuration_information_boiler_product_version_number_and_type_update_every: 20
+  configuration_information_boiler_product_version_number_and_type_update_every: 7
 
 text_sensor:
   - platform: opentherm42
@@ -19,15 +19,15 @@ text_sensor:
     # at a time (index in HB, character in LB) until the boiler-reported character count is reached.
     configuration_information_brand:
       name: "C2: Brand"
-      update_every: 20
+      update_every: 7
     # §5.3.2 Class 2, ID 94: Brand version, read the same way as ID 93.
     configuration_information_brand_version:
       name: "C2: Brand version"
-      update_every: 20
+      update_every: 7
     # §5.3.2 Class 2, ID 95: Brand serial number, read the same way as ID 93.
     configuration_information_brand_serial_number:
       name: "C2: Brand serial number"
-      update_every: 20
+      update_every: 7
     # §5.3.2 Class 2, ID 3 HB bit 0: DHW present [ dhw not present, dhw is present ]
     configuration_information_boiler_configuration_dhw_present:
       name: "C2: Boiler configuration: DHW present"
@@ -75,7 +75,7 @@ sensor:
     # §5.3.2 Class 2, ID 125: OpenTherm protocol version implemented by the boiler.
     configuration_information_opentherm_version_boiler:
       name: "C2: OpenTherm version Boiler"
-      update_every: 20
+      update_every: 7
     # §5.3.2 Class 2, ID 127 HB: Boiler product version number and type: product type (0..255).
     configuration_information_boiler_product_version_number_and_type_product_type:
       name: "C2: Boiler product version number and type: Product type"

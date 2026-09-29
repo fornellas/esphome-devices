@@ -1,7 +1,7 @@
 opentherm42:
   # §5.3.1 Class 1, ID 5: application-specific fault flags + OEM fault code -- required since the
   # OEM fault code sensor and several fault-flag binary_sensors below are configured.
-  control_and_status_information_application_specific_fault_flags_update_every: 8
+  control_and_status_information_application_specific_fault_flags_update_every: 4
 
 switch:
   - platform: opentherm42
@@ -178,7 +178,7 @@ sensor:
     # §5.3.1 Class 1, ID 115: OEM diagnostic code (0..65535) -- an OEM-specific diagnostic/service code.
     control_and_status_information_oem_diagnostic_code:
       name: "C1: OEM diagnostic code"
-      update_every: 10
+      update_every: 5
     # §5.3.1 Class 1, ID 73: OEM diagnostic code ventilation/heat-recovery (0..65535).
     # control_and_status_information_oem_diagnostic_code_ventilation_heat_recovery:
     #   name: "C1: OEM diagnostic code ventilation-heat-recovery"

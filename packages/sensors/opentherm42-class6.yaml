@@ -1,7 +1,7 @@
 opentherm42:
   # §5.3.6 Class 6, IDs 11/89/106: governs how fast the shared TSP round-robin rotation advances --
   # required since transparent_boiler_parameters below is configured.
-  transparent_boiler_parameters_update_every: 20
+  transparent_boiler_parameters_update_every: 7
 
 number:
   - platform: opentherm42
@@ -69,7 +69,7 @@ sensor:
     # §5.3.6 Class 6, ID 10 HB: Number of transparent-boiler-parameter's supported by the boiler.
     transparent_boiler_parameters_number_of_tsps:
       name: "C6: Number of TSP's"
-      update_every: 25
+      update_every: 7
     # §5.3.6 Class 6, ID 88 HB: Number of TSPs supported by the ventilation/heat-recovery system.
     # transparent_boiler_parameters_number_of_tsps_ventilation_heat_recovery:
     #   name: "C6: Number of TSP's ventilation-heat-recovery"
