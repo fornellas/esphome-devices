@@ -57,8 +57,16 @@ sensor:
     - platform: opentherm42
       # Synthetic diagnostic: how long the most recently completed sweep took, updated continuously.
       # Unconditionally scheduled by the hub itself, so no update_every field of its own.
-      sensor_and_informational_data_sweep_duration:
+      sweep_duration:
         name: "Sweep duration"
       # Same nature as the sweep duration sensor above, but for a single pass rather than a whole sweep.
-      sensor_and_informational_data_pass_duration:
+      pass_duration:
         name: "Pass duration"
+
+binary_sensor:
+    - platform: opentherm42
+      # Synthetic diagnostic: true if any conversation during the most recently completed sweep was
+      # rejected or failed (including ones tolerated by max_data_invalid's grace period, which
+      # otherwise only show up as a log line). Unconditionally scheduled by the hub itself.
+      sweep_had_errors:
+        name: "C4: Sweep had errors"
