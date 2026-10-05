@@ -78,6 +78,8 @@ esphome:
   includes:
     - word-clock.h
     - word-clock.cpp
+    - posix-tz.h
+    - posix-tz.cpp
 
 esp32:
   board: esp32-c3-devkitm-1
@@ -252,4 +254,8 @@ text:
     on_value:
       then:
         - lambda: |-
-            id(sntp_time).set_timezone(x);
+            esphome::time::ParsedTimezone tz;
+            if (parse_posix_tz(x, tz))
+              esphome::time::set_global_tz(tz);
+            else
+              ESP_LOGW("timezone", "Invalid POSIX TZ string: %s", x.c_str());
