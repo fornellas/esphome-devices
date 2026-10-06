@@ -1,7 +1,10 @@
-substitutions:
-  # Set to "-1" for devices mounted upside down, to invert the X axis and angle
-  # of targets, and the X coordinates of zones.
-  ld2450_x_multiplier: "1"
+external_components:
+  - source:
+      type: git
+      url: https://github.com/fornellas/esphome
+      ref: esphome-ld2450-zones
+    refresh: 0s
+    components: [ ld2450 ]
 
 ld2450:
   id: ld2450_radar
@@ -19,6 +22,24 @@ binary_sensor:
     has_still_target:
       name: "LD2450: Has Still Target"
       disabled_by_default: true
+    polygon_zones:
+      - polygon_zone_id: ld2450_polygon_zone_1
+        name: Polygon Zone 1 Presence
+      - polygon_zone_id: ld2450_polygon_zone_2
+        name: Polygon Zone 2 Presence
+      - polygon_zone_id: ld2450_polygon_zone_3
+        name: Polygon Zone 3 Presence
+
+text:
+  - platform: ld2450
+    ld2450_id: ld2450_radar
+    polygon_zones:
+      - id: ld2450_polygon_zone_1
+        name: Polygon Zone 1
+      - id: ld2450_polygon_zone_2
+        name: Polygon Zone 2
+      - id: ld2450_polygon_zone_3
+        name: Polygon Zone 3
 
 sensor:
   - platform: ld2450
@@ -26,249 +47,93 @@ sensor:
     target_count:
       name: "LD2450: Target Count"
       disabled_by_default: true
-      filters:
-        - timeout:
-            timeout: 1s
-            value: nan
-        - throttle_with_priority: 1s
     still_target_count:
       name: "LD2450: Still Target Count"
       disabled_by_default: true
-      filters:
-        - timeout:
-            timeout: 1s
-            value: nan
-        - throttle_with_priority: 1s
     moving_target_count:
       name: "LD2450: Moving Target Count"
       disabled_by_default: true
-      filters:
-        - timeout:
-            timeout: 1s
-            value: nan
-        - throttle_with_priority: 1s
     target_1:
       x:
         name: "LD2450: Target-1: X"
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
-          - lambda: return x * ${ld2450_x_multiplier};
       y:
         name: "LD2450: Target-1: Y"
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
       speed:
         name: "LD2450: Target-1: Speed"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
       angle:
         name: "LD2450: Target-1: Angle"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
-          - lambda: return x * ${ld2450_x_multiplier};
       distance:
         name: "LD2450: Target-1: Distance"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
       resolution:
         name: "LD2450: Target-1: Resolution"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
     target_2:
       x:
         name: "LD2450: Target-2: X"
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
-          - lambda: return x * ${ld2450_x_multiplier};
       y:
         name: "LD2450: Target-2: Y"
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
       speed:
         name: "LD2450: Target-2: Speed"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
       angle:
         name: "LD2450: Target-2: Angle"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
-          - lambda: return x * ${ld2450_x_multiplier};
       distance:
         name: "LD2450: Target-2: Distance"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
       resolution:
         name: "LD2450: Target-2: Resolution"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
     target_3:
       x:
         name: "LD2450: Target-3: X"
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
-          - lambda: return x * ${ld2450_x_multiplier};
       y:
         name: "LD2450: Target-3: Y"
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
       speed:
         name: "LD2450: Target-3: Speed"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
       angle:
         name: "LD2450: Target-3: Angle"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
-          - lambda: return x * ${ld2450_x_multiplier};
       distance:
         name: "LD2450: Target-3: Distance"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
       resolution:
         name: "LD2450: Target-3: Resolution"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
     zone_1:
       target_count:
         name: "LD2450: Zone-1: Target Count"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
       still_target_count:
         name: "LD2450: Zone-1: Still Target Count"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
       moving_target_count:
         name: "LD2450: Zone-1: Moving Target Count"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
     zone_2:
       target_count:
         name: "LD2450: Zone-2: Target Count"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
       still_target_count:
         name: "LD2450: Zone-2: Still Target Count"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
       moving_target_count:
         name: "LD2450: Zone-2: Moving Target Count"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
     zone_3:
       target_count:
         name: "LD2450: Zone-3: Target Count"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
       still_target_count:
         name: "LD2450: Zone-3: Still Target Count"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
       moving_target_count:
         name: "LD2450: Zone-3: Moving Target Count"
         disabled_by_default: true
-        filters:
-          - timeout:
-              timeout: 1s
-              value: nan
-          - throttle_with_priority: 1s
 
 switch:
   - platform: ld2450
@@ -285,152 +150,43 @@ number:
       name: "LD2450: Presence Timeout"
     zone_1:
       x1:
-        id: ld2450_zone_1_x1
-        internal: true
+        name: "LD2450: Zone-1: X1"
+        disabled_by_default: true
       y1:
         name: "LD2450: Zone-1: Y1"
         disabled_by_default: true
       x2:
-        id: ld2450_zone_1_x2
-        internal: true
+        name: "LD2450: Zone-1: X2"
+        disabled_by_default: true
       y2:
         name: "LD2450: Zone-1: Y2"
         disabled_by_default: true
     zone_2:
       x1:
-        id: ld2450_zone_2_x1
-        internal: true
+        name: "LD2450: Zone-2: X1"
+        disabled_by_default: true
       y1:
         name: "LD2450: Zone-2: Y1"
         disabled_by_default: true
       x2:
-        id: ld2450_zone_2_x2
-        internal: true
+        name: "LD2450: Zone-2: X2"
+        disabled_by_default: true
       y2:
         name: "LD2450: Zone-2: Y2"
         disabled_by_default: true
     zone_3:
       x1:
-        id: ld2450_zone_3_x1
-        internal: true
+        name: "LD2450: Zone-3: X1"
+        disabled_by_default: true
       y1:
         name: "LD2450: Zone-3: Y1"
         disabled_by_default: true
       x2:
         id: ld2450_zone_3_x2
-        internal: true
+        disabled_by_default: true
       y2:
         name: "LD2450: Zone-3: Y2"
         disabled_by_default: true
-
-  # The ld2450 platform's zone X1/X2 numbers above are marked internal, and
-  # mirrored here through template numbers that apply ld2450_x_multiplier, so
-  # zones can be configured using real-world coordinates regardless of how the
-  # sensor is physically mounted. min_value/max_value/step/device_class/
-  # unit_of_measurement/entity_category/icon mirror the ld2450 component's own
-  # ZoneCoordinateNumber config (esphome/components/ld2450/number/__init__.py).
-  - platform: template
-    id: ld2450_zone_1_x1_template
-    name: "LD2450: Zone-1: X1"
-    disabled_by_default: true
-    device_class: distance
-    unit_of_measurement: "mm"
-    entity_category: config
-    icon: "mdi:arrow-top-left-bold-box-outline"
-    min_value: -4860
-    max_value: 4860
-    step: 1
-    update_interval: 1s
-    lambda: return id(ld2450_zone_1_x1).state * ${ld2450_x_multiplier};
-    set_action:
-      - number.set:
-          id: ld2450_zone_1_x1
-          value: !lambda return x * ${ld2450_x_multiplier};
-  - platform: template
-    id: ld2450_zone_1_x2_template
-    name: "LD2450: Zone-1: X2"
-    disabled_by_default: true
-    device_class: distance
-    unit_of_measurement: "mm"
-    entity_category: config
-    icon: "mdi:arrow-bottom-right-bold-box-outline"
-    min_value: -4860
-    max_value: 4860
-    step: 1
-    update_interval: 1s
-    lambda: return id(ld2450_zone_1_x2).state * ${ld2450_x_multiplier};
-    set_action:
-      - number.set:
-          id: ld2450_zone_1_x2
-          value: !lambda return x * ${ld2450_x_multiplier};
-  - platform: template
-    id: ld2450_zone_2_x1_template
-    name: "LD2450: Zone-2: X1"
-    disabled_by_default: true
-    device_class: distance
-    unit_of_measurement: "mm"
-    entity_category: config
-    icon: "mdi:arrow-top-left-bold-box-outline"
-    min_value: -4860
-    max_value: 4860
-    step: 1
-    update_interval: 1s
-    lambda: return id(ld2450_zone_2_x1).state * ${ld2450_x_multiplier};
-    set_action:
-      - number.set:
-          id: ld2450_zone_2_x1
-          value: !lambda return x * ${ld2450_x_multiplier};
-  - platform: template
-    id: ld2450_zone_2_x2_template
-    name: "LD2450: Zone-2: X2"
-    disabled_by_default: true
-    device_class: distance
-    unit_of_measurement: "mm"
-    entity_category: config
-    icon: "mdi:arrow-bottom-right-bold-box-outline"
-    min_value: -4860
-    max_value: 4860
-    step: 1
-    update_interval: 1s
-    lambda: return id(ld2450_zone_2_x2).state * ${ld2450_x_multiplier};
-    set_action:
-      - number.set:
-          id: ld2450_zone_2_x2
-          value: !lambda return x * ${ld2450_x_multiplier};
-  - platform: template
-    id: ld2450_zone_3_x1_template
-    name: "LD2450: Zone-3: X1"
-    disabled_by_default: true
-    device_class: distance
-    unit_of_measurement: "mm"
-    entity_category: config
-    icon: "mdi:arrow-top-left-bold-box-outline"
-    min_value: -4860
-    max_value: 4860
-    step: 1
-    update_interval: 1s
-    lambda: return id(ld2450_zone_3_x1).state * ${ld2450_x_multiplier};
-    set_action:
-      - number.set:
-          id: ld2450_zone_3_x1
-          value: !lambda return x * ${ld2450_x_multiplier};
-  - platform: template
-    id: ld2450_zone_3_x2_template
-    name: "LD2450: Zone-3: X2"
-    disabled_by_default: true
-    device_class: distance
-    unit_of_measurement: "mm"
-    entity_category: config
-    icon: "mdi:arrow-bottom-right-bold-box-outline"
-    min_value: -4860
-    max_value: 4860
-    step: 1
-    update_interval: 1s
-    lambda: return id(ld2450_zone_3_x2).state * ${ld2450_x_multiplier};
-    set_action:
-      - number.set:
-          id: ld2450_zone_3_x2
-          value: !lambda return x * ${ld2450_x_multiplier};
 
 button:
   - platform: ld2450
