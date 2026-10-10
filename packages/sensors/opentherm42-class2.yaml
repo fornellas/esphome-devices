@@ -1,10 +1,13 @@
 opentherm42:
-  # §5.3.2 Class 2, ID 2 LB: this master's own MemberID code (0..255). A value of 0 signifies a
-  # customer non-specific device.
+  # §5.3.2 Class 2, ID 2 LB: this controller's own identity, announced to the boiler. A MemberID of 0
+  # means "no specific manufacturer" -- leave it at 0 unless your controller has a manufacturer-assigned
+  # OpenTherm MemberID.
   controller_member_id_code: 0
-  # §5.3.2 Class 2, ID 126 HB: this master's own product type (0..255), as defined by the manufacturer.
+  # §5.3.2 Class 2, ID 126 HB: this controller's own product type, as assigned by its manufacturer. 0 if
+  # not applicable.
   controller_product_type: 0
-  # §5.3.2 Class 2, ID 126 LB: this master's own product version (0..255), as defined by the manufacturer.
+  # §5.3.2 Class 2, ID 126 LB: this controller's own product version, as assigned by its manufacturer. 0
+  # if not applicable.
   controller_product_version: 0
   # §5.3.2 Class 2, ID 3: boiler configuration flags + boiler MemberID code -- required since the 8
   # text_sensors and the boiler_member_id_code sensor below are configured.
@@ -15,16 +18,16 @@ opentherm42:
 
 text_sensor:
   - platform: opentherm42
-    # §5.3.2 Class 2, ID 93: Brand -- the boiler manufacturer's brand name, read one ASCII character
-    # at a time (index in HB, character in LB) until the boiler-reported character count is reached.
+    # §5.3.2 Class 2, ID 93: Brand -- the boiler manufacturer's brand name. Built up a character at a
+    # time as the boiler is polled, so it may take a few seconds to fully populate after startup.
     configuration_information_brand:
       name: "C2: Brand"
       update_every: 7
-    # §5.3.2 Class 2, ID 94: Brand version, read the same way as ID 93.
+    # §5.3.2 Class 2, ID 94: Brand version, populated the same gradual way as Brand above.
     configuration_information_brand_version:
       name: "C2: Brand version"
       update_every: 7
-    # §5.3.2 Class 2, ID 95: Brand serial number, read the same way as ID 93.
+    # §5.3.2 Class 2, ID 95: Brand serial number, populated the same gradual way as Brand above.
     configuration_information_brand_serial_number:
       name: "C2: Brand serial number"
       update_every: 7
@@ -47,7 +50,7 @@ text_sensor:
     configuration_information_boiler_configuration_ch2_present:
       name: "C2: Boiler configuration: CH2 present"
     # §5.3.2 Class 2, ID 3 HB bit 6: Remote water filling function [ available or unknown, not available ].
-    # Unknown for applications with protocol version 2.2 or older.
+    # Unknown for boilers implementing OpenTherm protocol version 2.2 or older.
     configuration_information_boiler_configuration_remote_water_filling_function:
       name: "C2: Boiler configuration: Remote water filling function"
     # §5.3.2 Class 2, ID 3 HB bit 7: Heat/cool mode control [ switching done by master, switching done by boiler ]
@@ -72,7 +75,7 @@ sensor:
     # §5.3.2 Class 2, ID 3 LB: Boiler MemberID code (0..255) -- identifies the boiler's manufacturer.
     configuration_information_boiler_member_id_code:
       name: "C2: Boiler MemberID code"
-    # §5.3.2 Class 2, ID 125: OpenTherm protocol version implemented by the boiler.
+    # §5.3.2 Class 2, ID 125: the version of the OpenTherm protocol the boiler implements.
     configuration_information_opentherm_version_boiler:
       name: "C2: OpenTherm version Boiler"
       update_every: 7
@@ -82,10 +85,11 @@ sensor:
     # §5.3.2 Class 2, ID 127 LB: Boiler product version number and type: product version (0..255).
     configuration_information_boiler_product_version_number_and_type_product_version:
       name: "C2: Boiler product version number and type: Product version"
-    # §5.3.2 Class 2, ID 74 LB: MemberID code ventilation/heat-recovery (0..255).
+    # §5.3.2 Class 2, ID 74 LB: MemberID code for the ventilation/heat-recovery system (0..255).
     # configuration_information_member_id_code_ventilation_heat_recovery:
     #   name: "C2: MemberID code ventilation-heat-recovery"
-    # §5.3.2 Class 2, ID 75: OpenTherm protocol version implemented by the ventilation/heat-recovery system.
+    # §5.3.2 Class 2, ID 75: the version of the OpenTherm protocol the ventilation/heat-recovery system
+    # implements.
     # configuration_information_opentherm_version_ventilation_heat_recovery:
     #   name: "C2: OpenTherm version ventilation-heat-recovery"
     #   update_every: 7

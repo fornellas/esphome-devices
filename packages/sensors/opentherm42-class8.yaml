@@ -10,19 +10,19 @@ opentherm42:
 switch:
   - platform: opentherm42
     # §5.3.8.3 Class 8, ID 99 HB bit 4: Manual DHW push2 -- read/write, packed alongside the three
-    # Operating Mode selects below.
+    # Operating Mode selections below.
     control_of_special_applications_manual_dhw_push2:
       name: "C8: Manual DHW push2"
 
 number:
   - platform: opentherm42
-    # §5.3.8.1 Class 8, ID 7: Cooling control signal -- signal for the cooling plant (0..100%).
+    # §5.3.8.1 Class 8, ID 7: Cooling control signal -- the signal sent to the cooling plant (0..100%).
     # control_of_special_applications_cooling_control_signal:
     #   name: "C8: Cooling control signal"
     #   initial_value: 0
     #   update_every: 2
     # §5.3.8.2 Class 8, ID 14: Maximum relative modulation level setting, for sequencer and
-    # off-low&pump control applications (0..100%).
+    # off-low&pump-control applications (0..100%).
     control_of_special_applications_maximum_relative_modulation_level_setting:
       name: "C8: Maximum relative modulation level setting"
       initial_value: 100
@@ -48,7 +48,7 @@ select:
     control_of_special_applications_remote_override_operating_mode_heating_hc1:
       name: "C8: Remote Override Operating Mode Heating HC1"
     # §5.3.8.3 Class 8, ID 99 LB bits 4-7: Remote Override Operating Mode Heating HC2, same
-    # encoding as HC1.
+    # options as HC1 above.
     # control_of_special_applications_remote_override_operating_mode_heating_hc2:
     #   name: "C8: Remote Override Operating Mode Heating HC2"
 
@@ -62,11 +62,12 @@ sensor:
     control_of_special_applications_minimum_modulation_level:
       name: "C8: Minimum modulation level"
     # §5.3.8.3 Class 8, ID 9: Remote Override Room Setpoint (degrees C, 0..30).
-    # 0 = No override, 1..30 = Remote override room Setpoint.
+    # 0 = no override in effect, 1..30 = the room setpoint currently being overridden to.
     control_of_special_applications_remote_override_room_setpoint:
       name: "C8: Remote Override Room Setpoint"
       update_every: 3
-    # §5.3.8.3 Class 8, ID 39: Remote Override Room Setpoint 2 (degrees C, 0..30), same encoding.
+    # §5.3.8.3 Class 8, ID 39: Remote Override Room Setpoint 2 (degrees C, 0..30), same meaning as above
+    # for a second zone/circuit.
     # control_of_special_applications_remote_override_room_setpoint_2:
     #   name: "C8: Remote Override Room Setpoint 2"
     #   update_every: 3

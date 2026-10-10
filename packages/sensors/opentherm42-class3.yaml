@@ -31,10 +31,11 @@ button:
     # §5.3.3 Class 3, ID 4 HB = 9: Service mode 3-way valve to DHW request (no pump, no flame)
     remote_request_service_mode_3_way_valve_to_dhw:
       name: "C3: Service mode 3-way valve to DHW"
-    # §5.3.3 Class 3, ID 4 HB = 10: Request to reset service request flag
+    # §5.3.3 Class 3, ID 4 HB = 10: Request to reset the service-request flag
     remote_request_reset_service_request_flag:
       name: "C3: Reset service request flag"
-    # §5.3.3 Class 3, ID 4 HB = 11: Service test 1. This is an OEM specific test.
+    # §5.3.3 Class 3, ID 4 HB = 11: Service test 1. OEM-specific -- check your boiler manufacturer's
+    # documentation for what this does.
     remote_request_service_test_1:
       name: "C3: Service test 1"
     # §5.3.3 Class 3, ID 4 HB = 12: Automatic hydronic air purge.
@@ -43,13 +44,15 @@ button:
 
 text_sensor:
   - platform: opentherm42
-    # §5.3.3 Class 3, ID 4 LB: the most recent Request-Response-Code's meaning.
+    # §5.3.3 Class 3, ID 4 LB: what the boiler said about the most recent Remote Request button press
+    # above, in plain text.
     remote_request_last_response:
       name: "C3: Last response"
 
 sensor:
   - platform: opentherm42
-    # §5.3.3 Class 3, ID 4 LB: Req-Response-Code of the most recent remote request
-    # (0..127 = request refused, 128..255 = request accepted).
+    # §5.3.3 Class 3, ID 4 LB: the numeric response code for the most recent Remote Request button press
+    # (0..127 = request refused, 128..255 = request accepted). See the "Last response" text sensor above
+    # for the human-readable version.
     remote_request_last_response_code:
       name: "C3: Last response code"

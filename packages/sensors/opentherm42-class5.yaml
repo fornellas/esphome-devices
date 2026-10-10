@@ -9,19 +9,21 @@ opentherm42:
 
 number:
   - platform: opentherm42
-    # §5.3.5 Class 5, ID 56: DHW Setpoint -- domestic hot water temperature setpoint (degrees C, 0..127).
-    # A single number entity serves both directions -- see hub.h's RequestKind comment.
+    # §5.3.5 Class 5, ID 56: DHW Setpoint -- the domestic hot water temperature setpoint (degrees C,
+    # 0..127). Setting this writes the value to the boiler; it also shows back whatever the boiler
+    # confirms it's actually using.
     pre_defined_remote_boiler_parameters_dhw_setpoint:
       name: "C5: DHW Setpoint"
       initial_value: 40.0
       update_every: 6
-    # §5.3.5 Class 5, ID 57: max CH water Setpoint -- maximum allowable CH water Setpoint (degrees C, 0..127).
+    # §5.3.5 Class 5, ID 57: max CH water Setpoint -- the maximum allowed CH water setpoint (degrees C,
+    # 0..127), same read/write behavior as DHW Setpoint above.
     pre_defined_remote_boiler_parameters_max_ch_water_setpoint:
       name: "C5: max CH water Setpoint"
       initial_value: 50.0
       update_every: 6
-    # §5.3.5 Class 5, ID 87 HB: Nominal ventilation value -- nominal relative value for ventilation
-    # (0-100%), i.e. the value for the mid position in case of a 3-speed ventilation system.
+    # §5.3.5 Class 5, ID 87 HB: Nominal ventilation value -- the mid-position value for a 3-speed
+    # ventilation system (0-100%). 0% is the minimum set ventilation, 100% is the maximum.
     # pre_defined_remote_boiler_parameters_nominal_ventilation_value:
     #   name: "C5: Nominal ventilation value"
     #   initial_value: 50
@@ -50,15 +52,19 @@ text_sensor:
 
 sensor:
   - platform: opentherm42
-    # §5.3.5 Class 5, ID 48 HB: DHWsetp upp-bound -- upper bound for adjustment of DHW setp (degrees C).
+    # §5.3.5 Class 5, ID 48 HB: the upper bound your boiler allows for adjusting the DHW Setpoint number
+    # above (degrees C).
     pre_defined_remote_boiler_parameters_dhwsetp_upper_bound:
       name: "C5: DHWsetp upp-bound"
-    # §5.3.5 Class 5, ID 48 LB: DHWsetp low-bound -- lower bound for adjustment of DHW setp (degrees C).
+    # §5.3.5 Class 5, ID 48 LB: the lower bound your boiler allows for adjusting the DHW Setpoint number
+    # above (degrees C).
     pre_defined_remote_boiler_parameters_dhwsetp_lower_bound:
       name: "C5: DHWsetp low-bound"
-    # §5.3.5 Class 5, ID 49 HB: max CHsetp upp-bound -- upper bound for adjustment of maxCHsetp (degrees C).
+    # §5.3.5 Class 5, ID 49 HB: the upper bound your boiler allows for adjusting the max CH water
+    # Setpoint number above (degrees C).
     pre_defined_remote_boiler_parameters_max_chsetp_upper_bound:
       name: "C5: max CHsetp upp-bound"
-    # §5.3.5 Class 5, ID 49 LB: max CHsetp low-bnd -- lower bound for adjustment of maxCHsetp (degrees C).
+    # §5.3.5 Class 5, ID 49 LB: the lower bound your boiler allows for adjusting the max CH water
+    # Setpoint number above (degrees C).
     pre_defined_remote_boiler_parameters_max_chsetp_lower_bound:
       name: "C5: max CHsetp low-bnd"
