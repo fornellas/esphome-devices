@@ -65,8 +65,8 @@ button:
   - platform: opentherm42
     # §5.3.4 Class 4, ID 96: resets this counter to zero. Not every boiler supports this (optional for
     # the boiler to honor).
-    sensor_and_informational_data_cooling_operation_hours_reset:
-      name: "C4: Cooling Operation hours reset"
+    # sensor_and_informational_data_cooling_operation_hours_reset:
+    #   name: "C4: Cooling Operation hours reset"
     # §5.3.4 Class 4, ID 97: resets this counter to zero. Optional for the boiler to honor.
     # sensor_and_informational_data_power_cycles_reset:
     #   name: "C4: Power Cycles reset"

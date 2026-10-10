@@ -86,8 +86,8 @@ binary_sensor:
     control_and_status_information_boiler_status_flame_status:
       name: "C1: Boiler status: Flame status"
     # §5.3.1 Class 1, ID 0 LB bit 4: Cooling status [ cooling mode not active, cooling mode active ]
-    control_and_status_information_boiler_status_cooling_status:
-      name: "C1: Boiler status: Cooling status"
+    # control_and_status_information_boiler_status_cooling_status:
+    #   name: "C1: Boiler status: Cooling status"
     # §5.3.1 Class 1, ID 0 LB bit 5: CH2 mode [ CH2 not active, CH2 active ]
     # control_and_status_information_boiler_status_ch2_mode:
     #   name: "C1: Boiler status: CH2 mode"
