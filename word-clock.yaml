@@ -1,5 +1,4 @@
 substitutions:
-  ota_password: !secret word-clock_ota_password
   api_encryption_key: !secret word-clock_api_encryption_key
   bh1750_address: 0x23
 packages:
