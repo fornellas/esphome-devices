@@ -1,5 +1,4 @@
 substitutions:
-  ota_password: !secret xiao-esp32c3-media-player-2518_ota_password
   api_encryption_key: !secret xiao-esp32c3-media-player-2518_api_encryption_key
 
 packages:
