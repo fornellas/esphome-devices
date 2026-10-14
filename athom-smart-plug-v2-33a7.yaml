@@ -1,5 +1,4 @@
 substitutions:
-  ota_password: !secret athom-smart-plug-v2-33a7_ota_password
   api_encryption_key: !secret athom-smart-plug-v2-33a7_api_encryption_key
 packages:
   - !include packages/devices/athom-smart-plug-v2.yaml
