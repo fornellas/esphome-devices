@@ -1,5 +1,4 @@
 substitutions:
-  ota_password: !secret sonoff-pow-ring-fc5a_ota_password
   api_encryption_key: !secret sonoff-pow-ring-fc5a_api_encryption_key
 packages:
   - !include packages/devices/sonoff-pow-ring.yaml
