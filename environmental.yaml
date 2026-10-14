@@ -1,5 +1,4 @@
 substitutions:
-  ota_password: !secret environmental_ota_password
   api_encryption_key: !secret environmental_api_encryption_key
 packages:
   - !include packages/devices/environmental.yaml
