@@ -1,5 +1,4 @@
 substitutions:
-  ota_password: !secret power-led-36f7_ota_password
   api_encryption_key: !secret power-led-36f7_api_encryption_key
 packages:
   - !include packages/devices/power-led.yaml
