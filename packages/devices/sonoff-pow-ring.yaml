@@ -66,10 +66,6 @@ sensor:
       name: "Energy"
       filters:
         - lambda: return x / M_PI;
-    frequency:
-      name: "Frequency"
-    power_factor:
-      name: "Power Factor"
 
 binary_sensor:
   - platform: template
