@@ -2,7 +2,7 @@ external_components:
   - source:
       type: git
       url: https://github.com/fornellas/esphome
-      ref: esphome-ld2450-zones
+      ref: ld2450-target-xy-text-sensor
     refresh: 0s
     components: [ ld2450 ]
 
@@ -56,8 +56,10 @@ sensor:
     target_1:
       x:
         name: "LD2450: Target-1: X"
+        disabled_by_default: true
       y:
         name: "LD2450: Target-1: Y"
+        disabled_by_default: true
       speed:
         name: "LD2450: Target-1: Speed"
         disabled_by_default: true
@@ -73,8 +75,10 @@ sensor:
     target_2:
       x:
         name: "LD2450: Target-2: X"
+        disabled_by_default: true
       y:
         name: "LD2450: Target-2: Y"
+        disabled_by_default: true
       speed:
         name: "LD2450: Target-2: Speed"
         disabled_by_default: true
@@ -90,8 +94,10 @@ sensor:
     target_3:
       x:
         name: "LD2450: Target-3: X"
+        disabled_by_default: true
       y:
         name: "LD2450: Target-3: Y"
+        disabled_by_default: true
       speed:
         name: "LD2450: Target-3: Speed"
         disabled_by_default: true
@@ -209,14 +215,20 @@ text_sensor:
       direction:
         name: "LD2450: Target-1: Direction"
         disabled_by_default: true
+      xy:
+        name: "Target-1 XY"
     target_2:
       direction:
         name: "LD2450: Target-2: Direction"
         disabled_by_default: true
+      xy:
+        name: "Target-2 XY"
     target_3:
       direction:
         name: "LD2450: Target-3: Direction"
         disabled_by_default: true
+      xy:
+        name: "Target-3 XY"
 
 select:
   - platform: ld2450
