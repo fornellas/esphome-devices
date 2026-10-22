@@ -1,7 +1,0 @@
-substitutions:
-  api_encryption_key: !secret environmental_api_encryption_key
-packages:
-  - !include packages/devices/environmental.yaml
-esphome:
-  name: environmental
-  friendly_name: "Environmental"
