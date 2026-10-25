@@ -128,7 +128,7 @@ sensor:
     # firing, relative to its own minimum and maximum. 0% = minimum, 100% = maximum.
     sensor_and_informational_data_relative_modulation_level:
       name: "C4: Relative Modulation Level"
-      update_every: 3
+      update_every: 1
     # §5.3.4 Class 4, ID 18: CH (central heating) water pressure (bar, 0..5).
     sensor_and_informational_data_ch_water_pressure:
       name: "C4: CH water pressure"
