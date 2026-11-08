@@ -57,15 +57,11 @@ sensor:
     current_1:
       name: "Current"
       filters:
-          - lambda: return x / M_PI;
     active_power_1:
       name: "Power"
-      filters:
-        - lambda: return x / M_PI;
     energy_1:
       name: "Energy"
-      filters:
-        - lambda: return x / M_PI;
+    current_input: current_transformer
 
 binary_sensor:
   - platform: template
