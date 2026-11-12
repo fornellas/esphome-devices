@@ -1,3 +1,5 @@
+# FIXME as of 2026-11-12 the external component for this PR requires esphome from dev
+# FIXME once this gets merged and we get a release (likely 2026.12), this external component can go
 external_components:
   - source: github://pr#22285
     components: [ld2450, text_sensor]
@@ -199,7 +201,7 @@ button:
     restart:
       name: "LD2450: Restart"
     xy_unfiltered:
-      name: LD2450 XY Unfiltered  
+      name: LD2450 XY Unfiltered
 
 text_sensor:
   - platform: ld2450
