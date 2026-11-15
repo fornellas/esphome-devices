@@ -1,0 +1,7 @@
+substitutions:
+  api_encryption_key: !secret esp32-cam-fa0a_api_encryption_key
+packages:
+  - !include packages/devices/esp32-cam.yaml
+esphome:
+  name: esp32-cam-fa0a
+  friendly_name: "ESP32 CAM fa0a"
