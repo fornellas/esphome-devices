@@ -1,0 +1,7 @@
+substitutions:
+  api_encryption_key: !secret esp32-cam-e52f_api_encryption_key
+packages:
+  - !include packages/devices/esp32-cam.yaml
+esphome:
+  name: esp32-cam-e52f
+  friendly_name: "ESP32 CAM e52f"
