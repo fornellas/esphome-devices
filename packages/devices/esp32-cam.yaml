@@ -2,27 +2,48 @@ packages:
   - !include ../common.yaml
   - !include ../common-esp32.yaml
 
+# esp32_camera from https://github.com/esphome/esphome/pull/22685, which lets a lambda change
+# jpeg_quality and resolution at runtime (set_jpeg_quality() / set_frame_size() followed by
+# update_camera_parameters()). It replaces the built-in esp32_camera component. "pr#" tracks the
+# head of the PR, refreshed once a day: pin it with github://fornellas/esphome@<commit> once it is
+# stable, and drop this block when the PR is merged and released.
+external_components:
+  - source: github://pr#22685
+    components: [esp32_camera]
+
 esphome:
-  # switch restore_mode re-triggers turn_on/turn_off_action on its own, but
-  # number/select restore_value only republishes the stored state - it does
-  # not re-run set_action. Replay each one through make_call()/perform() once
-  # everything is up (priority is below every component's default) so the
-  # sensor actually matches what Home Assistant shows after a reboot.
   on_boot:
-    priority: -100
-    then:
-      - lambda: |-
-          id(camera_contrast).make_call().set_value(id(camera_contrast).state).perform();
-          id(camera_brightness).make_call().set_value(id(camera_brightness).state).perform();
-          id(camera_saturation).make_call().set_value(id(camera_saturation).state).perform();
-          id(camera_ae_level).make_call().set_value(id(camera_ae_level).state).perform();
-          id(camera_aec_value).make_call().set_value(id(camera_aec_value).state).perform();
-          id(camera_agc_value).make_call().set_value(id(camera_agc_value).state).perform();
-          id(camera_max_framerate).make_call().set_value(id(camera_max_framerate).state).perform();
-          id(camera_idle_framerate).make_call().set_value(id(camera_idle_framerate).state).perform();
-          id(camera_special_effect).make_call().set_option(id(camera_special_effect).current_option().str()).perform();
-          id(camera_wb_mode).make_call().set_option(id(camera_wb_mode).current_option().str()).perform();
-          id(camera_agc_gain_ceiling).make_call().set_option(id(camera_agc_gain_ceiling).current_option().str()).perform();
+    # Saved JPEG Quality / Resolution, applied before the camera starts. template number/select
+    # setup() (priority 800) restores the stored value, this runs after it and esp32_camera setup()
+    # (priority 600, the default) runs after this, so the camera is started directly with the saved
+    # values. Before setup() update_camera_parameters() has no sensor to talk to and does nothing,
+    # set_jpeg_quality() / set_frame_size() only store the value. Replaying them later (priority -100)
+    # would start the camera at the compiled-in values and then restart the driver.
+    - priority: 700
+      then:
+        - lambda: |-
+            id(camera_jpeg_quality).make_call().set_value(id(camera_jpeg_quality).state).perform();
+            id(camera_resolution).make_call().set_option(id(camera_resolution).current_option().str()).perform();
+
+    # switch restore_mode re-triggers turn_on/turn_off_action on its own, but
+    # number/select restore_value only republishes the stored state - it does
+    # not re-run set_action. Replay each one through make_call()/perform() once
+    # everything is up (priority is below every component's default) so the
+    # sensor actually matches what Home Assistant shows after a reboot.
+    - priority: -100
+      then:
+        - lambda: |-
+            id(camera_contrast).make_call().set_value(id(camera_contrast).state).perform();
+            id(camera_brightness).make_call().set_value(id(camera_brightness).state).perform();
+            id(camera_saturation).make_call().set_value(id(camera_saturation).state).perform();
+            id(camera_ae_level).make_call().set_value(id(camera_ae_level).state).perform();
+            id(camera_aec_value).make_call().set_value(id(camera_aec_value).state).perform();
+            id(camera_agc_value).make_call().set_value(id(camera_agc_value).state).perform();
+            id(camera_max_framerate).make_call().set_value(id(camera_max_framerate).state).perform();
+            id(camera_idle_framerate).make_call().set_value(id(camera_idle_framerate).state).perform();
+            id(camera_special_effect).make_call().set_option(id(camera_special_effect).current_option().str()).perform();
+            id(camera_wb_mode).make_call().set_option(id(camera_wb_mode).current_option().str()).perform();
+            id(camera_agc_gain_ceiling).make_call().set_option(id(camera_agc_gain_ceiling).current_option().str()).perform();
 
 esp32:
   variant: esp32
@@ -49,9 +70,9 @@ esp32_camera:
     pin: GPIO0
     frequency: 20MHz
   power_down_pin: GPIO32
-  # resolution is only ever read once, by esp_camera_init() at boot. esp32_camera exposes no re-init
-  # call, so unlike everything below (which is pushed live via update_camera_parameters()), it
-  # can't be changed without recompiling.
+  # resolution is only the compiled-in default: the "Resolution" select (restored and applied at boot
+  # before the camera starts, and changeable live) overrides it. Keep it in sync with the select's
+  # initial_option. Larger values need more PSRAM and the sensor lowers sizes it does not support.
   # resolution: 160x120 # (QQVGA, 4:3)
   # resolution: 176x144 # (QCIF, 11:9)
   # resolution: 240x176 # (HQVGA, 15:11)
@@ -70,9 +91,9 @@ esp32_camera:
   # resolution: 2560x1600 # (WQXGA, 8:5)
   # resolution: 1080x1920 # (Portrait FHD, 9:16)
   # resolution: 2560x1920 # (QSXGA, 4:3)
-  # jpeg_quality is only ever read once, by esp_camera_init() at boot. esp32_camera exposes no re-init
-  # call, so unlike everything below (which is pushed live via update_camera_parameters()), it
-  # can't be changed without recompiling.
+  # jpeg_quality is only the compiled-in default: the "JPEG Quality" number (restored and applied at
+  # boot before the camera starts, and changeable live) overrides it. Keep it in sync with the
+  # number's initial_value. 6 (best) to 63 (worst).
   jpeg_quality: 6
   # Two frame buffers (also switches the grab mode to "latest"). In JPEG mode each one is
   # 1600*1200/5 = 384000 bytes in PSRAM (the board has 4MB), nothing extra in internal RAM.
@@ -319,6 +340,26 @@ number:
           // 0 disables the periodic idle frame
           id(esp32_camera_id).set_idle_update_interval(x > 0 ? (uint32_t) roundf(1000.0f / x) : 0);
 
+  # Lower is better quality (and bigger frames): 6 is the best, 63 the worst. Needs the external
+  # esp32_camera component above. Applied at boot by esphome.on_boot (priority 700).
+  - platform: template
+    name: "JPEG Quality"
+    id: camera_jpeg_quality
+    icon: mdi:image-filter-hdr
+    entity_category: config
+    min_value: 6
+    max_value: 63
+    step: 1
+    mode: slider
+    optimistic: true
+    initial_value: 6
+    restore_value: true
+    set_action:
+      - lambda: |-
+          // false (and an error in the log) when out of range, which the number's limits prevent
+          if (id(esp32_camera_id).set_jpeg_quality((uint8_t) x))
+            id(esp32_camera_id).update_camera_parameters();
+
 select:
   - platform: template
     name: "Special Effect"
@@ -416,5 +457,74 @@ select:
             id(esp32_camera_id).set_agc_gain_ceiling(esphome::esp32_camera::ESP32_GAINCEILING_64X);
           } else if (x == "128x") {
             id(esp32_camera_id).set_agc_gain_ceiling(esphome::esp32_camera::ESP32_GAINCEILING_128X);
+          }
+          id(esp32_camera_id).update_camera_parameters();
+
+  # Needs the external esp32_camera component above. A change restarts the camera driver (frame
+  # buffers are allocated again), so the stream blinks for a moment. Applied at boot by
+  # esphome.on_boot (priority 700), before the camera starts. Keep initial_option in sync with
+  # esp32_camera.resolution.
+  #
+  # Every resolution esp32_camera knows is listed, but the sensor decides what it can deliver: the
+  # driver lowers a size the sensor does not take (an OV2640, the usual sensor on this board, stops
+  # at 1600x1200), so the larger entries then give 1600x1200 while this select still shows them.
+  - platform: template
+    name: "Resolution"
+    id: camera_resolution
+    icon: mdi:image-size-select-large
+    entity_category: config
+    optimistic: true
+    initial_option: "1600x1200"
+    restore_value: true
+    options:
+      - "160x120"    # QQVGA, 4:3
+      - "176x144"    # QCIF, 11:9
+      - "240x176"    # HQVGA, 15:11
+      - "320x240"    # QVGA, 4:3
+      - "400x296"    # CIF, 50:37
+      - "640x480"    # VGA, 4:3
+      - "800x600"    # SVGA, 4:3
+      - "1024x768"   # XGA, 4:3
+      - "1280x1024"  # SXGA, 5:4
+      - "1600x1200"  # UXGA, 4:3
+      - "1920x1080"  # FHD, 16:9
+      - "720x1280"   # Portrait HD, 9:16
+      - "864x1536"   # Portrait 3MP, 9:16
+      - "2048x1536"  # QXGA, 4:3
+      - "2560x1440"  # QHD, 16:9
+      - "2560x1600"  # WQXGA, 8:5
+      - "1080x1920"  # Portrait FHD, 9:16
+      - "2560x1920"  # QSXGA, 4:3
+    set_action:
+      - lambda: |-
+          using esphome::esp32_camera::ESP32CameraFrameSize;
+          static const struct {
+            const char *name;
+            ESP32CameraFrameSize size;
+          } sizes[] = {
+            {"160x120", esphome::esp32_camera::ESP32_CAMERA_SIZE_160X120},
+            {"176x144", esphome::esp32_camera::ESP32_CAMERA_SIZE_176X144},
+            {"240x176", esphome::esp32_camera::ESP32_CAMERA_SIZE_240X176},
+            {"320x240", esphome::esp32_camera::ESP32_CAMERA_SIZE_320X240},
+            {"400x296", esphome::esp32_camera::ESP32_CAMERA_SIZE_400X296},
+            {"640x480", esphome::esp32_camera::ESP32_CAMERA_SIZE_640X480},
+            {"800x600", esphome::esp32_camera::ESP32_CAMERA_SIZE_800X600},
+            {"1024x768", esphome::esp32_camera::ESP32_CAMERA_SIZE_1024X768},
+            {"1280x1024", esphome::esp32_camera::ESP32_CAMERA_SIZE_1280X1024},
+            {"1600x1200", esphome::esp32_camera::ESP32_CAMERA_SIZE_1600X1200},
+            {"1920x1080", esphome::esp32_camera::ESP32_CAMERA_SIZE_1920X1080},
+            {"720x1280", esphome::esp32_camera::ESP32_CAMERA_SIZE_720X1280},
+            {"864x1536", esphome::esp32_camera::ESP32_CAMERA_SIZE_864X1536},
+            {"2048x1536", esphome::esp32_camera::ESP32_CAMERA_SIZE_2048X1536},
+            {"2560x1440", esphome::esp32_camera::ESP32_CAMERA_SIZE_2560X1440},
+            {"2560x1600", esphome::esp32_camera::ESP32_CAMERA_SIZE_2560X1600},
+            {"1080x1920", esphome::esp32_camera::ESP32_CAMERA_SIZE_1080X1920},
+            {"2560x1920", esphome::esp32_camera::ESP32_CAMERA_SIZE_2560X1920},
+          };
+          for (const auto &s : sizes) {
+            if (x == s.name) {
+              id(esp32_camera_id).set_frame_size(s.size);
+              break;
+            }
           }
           id(esp32_camera_id).update_camera_parameters();
