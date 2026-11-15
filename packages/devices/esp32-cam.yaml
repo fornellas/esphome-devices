@@ -18,6 +18,8 @@ esphome:
           id(camera_ae_level).make_call().set_value(id(camera_ae_level).state).perform();
           id(camera_aec_value).make_call().set_value(id(camera_aec_value).state).perform();
           id(camera_agc_value).make_call().set_value(id(camera_agc_value).state).perform();
+          id(camera_max_framerate).make_call().set_value(id(camera_max_framerate).state).perform();
+          id(camera_idle_framerate).make_call().set_value(id(camera_idle_framerate).state).perform();
           id(camera_special_effect).make_call().set_option(id(camera_special_effect).current_option().str()).perform();
           id(camera_wb_mode).make_call().set_option(id(camera_wb_mode).current_option().str()).perform();
           id(camera_agc_gain_ceiling).make_call().set_option(id(camera_agc_gain_ceiling).current_option().str()).perform();
@@ -72,6 +74,9 @@ esp32_camera:
   # call, so unlike everything below (which is pushed live via update_camera_parameters()), it
   # can't be changed without recompiling.
   jpeg_quality: 6
+  # Two frame buffers (also switches the grab mode to "latest"). In JPEG mode each one is
+  # 1600*1200/5 = 384000 bytes in PSRAM (the board has 4MB), nothing extra in internal RAM.
+  frame_buffer_count: 2
 
 switch:
   - platform: gpio
@@ -156,6 +161,22 @@ switch:
     turn_off_action:
       - lambda: |-
           id(esp32_camera_id).set_agc_mode(esphome::esp32_camera::ESP32_GC_MODE_MANU);
+          id(esp32_camera_id).update_camera_parameters();
+
+  - platform: template
+    name: "Test Pattern"
+    id: camera_test_pattern
+    icon: mdi:palette-swatch
+    entity_category: config
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    turn_on_action:
+      - lambda: |-
+          id(esp32_camera_id).set_test_pattern(true);
+          id(esp32_camera_id).update_camera_parameters();
+    turn_off_action:
+      - lambda: |-
+          id(esp32_camera_id).set_test_pattern(false);
           id(esp32_camera_id).update_camera_parameters();
 
 number:
@@ -260,6 +281,43 @@ number:
       - lambda: |-
           id(esp32_camera_id).set_agc_value((uint8_t) x);
           id(esp32_camera_id).update_camera_parameters();
+
+  # The two framerates are plain intervals read on every loop() iteration, so they apply live and
+  # do not go through update_camera_parameters().
+  - platform: template
+    name: "Max Framerate"
+    id: camera_max_framerate
+    icon: mdi:speedometer
+    entity_category: config
+    unit_of_measurement: "fps"
+    min_value: 0.1
+    max_value: 60
+    step: 0.1
+    mode: slider
+    optimistic: true
+    initial_value: 10
+    restore_value: true
+    set_action:
+      - lambda: |-
+          id(esp32_camera_id).set_max_update_interval((uint32_t) roundf(1000.0f / x));
+
+  - platform: template
+    name: "Idle Framerate"
+    id: camera_idle_framerate
+    icon: mdi:speedometer-slow
+    entity_category: config
+    unit_of_measurement: "fps"
+    min_value: 0
+    max_value: 1
+    step: 0.01
+    mode: slider
+    optimistic: true
+    initial_value: 0.1
+    restore_value: true
+    set_action:
+      - lambda: |-
+          // 0 disables the periodic idle frame
+          id(esp32_camera_id).set_idle_update_interval(x > 0 ? (uint32_t) roundf(1000.0f / x) : 0);
 
 select:
   - platform: template
